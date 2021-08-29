@@ -1,11 +1,15 @@
-import React,{Component} from 'react'
+import React,{useCallback ,Component} from 'react'
+import { withRouter } from 'react-router'
+import fbConfig from '../../config/fbConfig'
+import {  signUp } from '../../database/actions/authActions'
+import { connect } from 'react-redux'
 
-export default class SignUp extends Component {
+export class SignUp extends Component {
   state={
-    email:'',
-    password:'',
     firstName:'',
-    lastName:''
+    lastName:'',
+    email:'',
+    password:''
   }
   handleChange=(e)=>{
     this.setState({
@@ -14,7 +18,7 @@ export default class SignUp extends Component {
   }
   handleSubmit=(e)=>{
     e.preventDefault();
-    console.log(this.state);
+    this.props.signUp(this.state)
   }
   render() {
     return (
@@ -38,6 +42,10 @@ export default class SignUp extends Component {
             <input id="password" type="password" onChange={this.handleChange}/>
           </div>
           <div className="input-field">
+            <label htmlFor="password">RePassword: </label>
+            <input id="password" type="password" onChange={this.handleChange}/>
+          </div>
+          <div className="input-field">
             <button className="btn pink lighten-1 z-depth-0">Sign Up</button>
           </div>
           </form>        
@@ -45,4 +53,15 @@ export default class SignUp extends Component {
     )
   }
 }
+const mapStateToProps=(state)=>{
+  return{
+    auth:state.firebase.auth
+  }
+}
+const mapDispatchToProps=(dispatch)=>{
+  return{
+    signUp:(newUser)=>dispatch(signUp(newUser))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps) (SignUp);
   

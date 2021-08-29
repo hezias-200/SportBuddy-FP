@@ -8,10 +8,6 @@ export const createEvent=(event)=>{
             eventName:'',
             authorId:12345,
             createAt:new Date()
-            
-
-
-
         }).then(()=>{
             
             dispatch({type:'CREATE_EVENT',event});

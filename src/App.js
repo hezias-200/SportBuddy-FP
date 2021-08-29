@@ -13,11 +13,6 @@ import SignUp from './components/auth/SignUp';
 // import Register from './Register';
 
 function App() {
-  let [state, setState] = React.useState({ page: "Login" });
-
-  let setPage = (newPage) => {
-    setState({ page: newPage })
-  }
 
   return (
     <BrowserRouter>
@@ -30,10 +25,6 @@ function App() {
         <Route  path='/chat' component={Chat}/>
         <Route  path='/myprofile' component={MyProfile}/>
         <Route  path='/homepage' component={HomePage}/>
-
-
-
-
         </Switch>
       </div>
     </BrowserRouter>

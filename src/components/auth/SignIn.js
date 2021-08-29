@@ -1,39 +1,58 @@
-import React,{Component} from 'react'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { signIn } from '../../database/actions/authActions'
+import { authError } from '../../account/reducers/authReducer'
 
-export default class Login extends Component {
-  state={
-    email:'',
-    password:''
+class SignIn extends Component {
+  state = {
+    email: '',
+    password: ''
   }
-  handleChange=(e)=>{
+  handleChange = (e) => {
     this.setState({
-      [e.target.id]:e.target.value
+      [e.target.id]: e.target.value
     })
   }
-  handleSubmit=(e)=>{
+  handleSubmit = (e) => {
     e.preventDefault();
-    console.log(this.state);
+    this.props.signIn(this.state);
   }
   render() {
+    const { authError } = this.props;
     return (
-      <div className="center" style={{ width: '30rem',margin:'auto', marginTop:"8%" }}>
+      <div className="center" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }}>
         <form onSubmit={this.handleSubmit} className="white">
           <h5 className="grey-text text-darken-3">Sign In</h5>
           <div className="input-field">
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" onChange={this.handleChange}/>
+            <input id="email" type="email" onChange={this.handleChange} />
 
           </div>
           <div className="input-field">
             <label htmlFor="password">password</label>
-            <input id="password" type="password" onChange={this.handleChange}/>
+            <input id="password" type="password" onChange={this.handleChange} />
+          </div>
+          <div className="input-field">
+            <label htmlFor="text">Need an account?</label>
           </div>
           <div className="input-field">
             <button className="btn pink lighten-1 z-depth-0">Sign In</button>
+            <div className="red-text center">{authError ? <p>{authError}</p> : null}
+            </div>
           </div>
-          </form>        
+        </form>
       </div>
     )
   }
 }
-  
+const mapStateToProps = (state) => {
+  return {
+    authError: state.auth.authError
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    signIn:(creds)=>dispatch(signIn(creds))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn);

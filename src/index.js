@@ -15,17 +15,20 @@ import { getFirebase } from 'react-redux-firebase';
 
 const store=createStore(rootReducer,
   compose (
-    // applyMiddleware(thunk.withExtraArgument({getFirestore,getFirebase})),
-    // reactReduxFirebase(fbConfig),
-    // reduxFirestore(fbConfig)
+    applyMiddleware(thunk.withExtraArgument({getFirestore,getFirebase})),
+    reduxFirestore(fbConfig),
+    reactReduxFirebase(fbConfig,{attachAuthIsReady:true})
   )    
     );
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
+    store.firebaseAuthIsReady.then(()=>{
+
+      ReactDOM.render(
+        <Provider store={store}>
+          <App />
+        </Provider>,
+        document.getElementById('root')
+      );
+    })
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

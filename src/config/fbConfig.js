@@ -2,7 +2,7 @@ import firebase from "firebase/app";
 import 'firebase/firestore'
 import 'firebase/auth'
 
-var config={
+const config={
     apiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
     authDomain: "sport-buddy-322710.firebaseapp.com",
     projectId: "sport-buddy-322710",
