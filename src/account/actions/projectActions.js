@@ -1,12 +1,13 @@
-import { firestoreConnect } from "react-redux-firebase";
 
 export const createEvent=(event)=>{
     return(dispatch,getState,{getFirebase,getFirestore})=>{
         const firestore=getFirestore();
+        const profile=getState().firebase.profile;
+        const autorId=getState().firebase.auth.uid;
+
         firestore.collection('events').add({
             ...event,
-            eventName:'',
-            authorId:12345,
+            authorId:autorId,
             createAt:new Date()
         }).then(()=>{
             

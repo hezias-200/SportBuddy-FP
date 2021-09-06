@@ -1,5 +1,11 @@
-
+import logolocation from '../logolocation.png'
 import React from "react";
+import { Redirect } from "react-router-dom";
+import { connect } from 'react-redux'
+import { firestoreConnect } from 'react-redux-firebase';
+import { compose } from 'redux';
+
+
 import {
   GoogleMap,
   useLoadScript,
@@ -24,7 +30,7 @@ import mapStyles from './mapStyles'
 
 const libraries = ["places"];
 const mapContainerStyle = {
-  height: "100vh",
+  height: "80vh",
   width: "100vw",
 };
 const options = {
@@ -33,17 +39,29 @@ const options = {
   zoomControl: true,
 };
 const center = {
-  lat: 43.6532,
-  lng: -79.3832,
+  lat: 32.085300,
+  lng: 34.781769,
 };
+const f=[]
+function HomePage(props) {
 
-export default function HomePage() {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
-    libraries,
+
+  const { events } = props;
+
+  // for (const [key, value] of Object.entries(events.events)) {
+  //   f[key]['location']=events.events[key].location;
+  // }
+  // for (var key in events.events) {
+  //    f[key]= events.events[key].location{
+  //      latmap:events.events[key].location.latmap,
+  //      lngmap:events.events[key].location.lngmap
+
+  //     }
+  // }
+  // console.log(f);
+  const [markers, setMarkers] = React.useState({
   });
-  const [markers, setMarkers] = React.useState([]);
-  const [selected, setSelected] = React.useState(null);
+
 
   const onMapClick = React.useCallback((e) => {
     setMarkers((current) => [
@@ -55,41 +73,54 @@ export default function HomePage() {
       },
     ]);
   }, []);
+  const panTo = React.useCallback(({ lat, lng }) => {
+
+    mapRef.current.panTo({ lat, lng });
+    mapRef.current.setZoom(15);
+  }, []);
+
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
+    libraries,
+  });
+
+  const [selected, setSelected] = React.useState(null);
+
 
   const mapRef = React.useRef();
   const onMapLoad = React.useCallback((map) => {
     mapRef.current = map;
   }, []);
 
-  const panTo = React.useCallback(({ lat, lng }) => {
-    mapRef.current.panTo({ lat, lng });
-    mapRef.current.setZoom(14);
-  }, []);
+
 
   if (loadError) return "Error";
   if (!isLoaded) return "Loading...";
+
+  const { auth } = props;
+  if (!auth.uid) return <Redirect to='/' />
+
+  const handleOnLoad = (map) => {
+    const bounds = new window.google.maps.LatLngBounds();
+    f.forEach(({ position }) => bounds.extend(position));
+    map.fitBounds(bounds);
+  };
+
+
   return (
     <div>
-      <h1>
-        Bears{" "}
-        <span role="img" aria-label="tent">
-          ⛺️
-        </span>
-      </h1>
-
-      <Locate panTo={panTo} />
       <Search panTo={panTo} />
-
       <GoogleMap
         id="map"
         mapContainerStyle={mapContainerStyle}
-        zoom={8}
+        zoom={15}
         center={center}
         options={options}
-        onClick={onMapClick}
-        onLoad={onMapLoad}
+        onLoad={handleOnLoad}
+
       >
-        {markers.map((marker) => (
+        {/* {f.map((marker) => (
+          
           <Marker
             key={`${marker.lat}-${marker.lng}`}
             position={{ lat: marker.lat, lng: marker.lng }}
@@ -97,13 +128,13 @@ export default function HomePage() {
               setSelected(marker);
             }}
             icon={{
-              url: `/bear.svg`,
+              iconUrl: { logolocation },
               origin: new window.google.maps.Point(0, 0),
               anchor: new window.google.maps.Point(15, 15),
               scaledSize: new window.google.maps.Size(30, 30),
             }}
           />
-        ))}
+        )) }
 
         {selected ? (
           <InfoWindow
@@ -122,7 +153,12 @@ export default function HomePage() {
               <p>Spotted {formatRelative(selected.time, new Date())}</p>
             </div>
           </InfoWindow>
-        ) : null}
+        ) : null} */}
+        {f.map((x)=>{
+          console.log(x.latmap);
+          <Marker
+          position={x}/>
+        }) }
       </GoogleMap>
     </div>
   );
@@ -144,7 +180,7 @@ function Locate({ panTo }) {
         );
       }}
     >
-      <img src="/compass.svg" alt="compass" />
+      <img src={logolocation} alt="mylocation" />
     </button>
   );
 }
@@ -158,12 +194,12 @@ function Search({ panTo }) {
     clearSuggestions,
   } = usePlacesAutocomplete({
     requestOptions: {
-      location: { lat: () => 43.6532, lng: () => -79.3832 },
-      radius: 100 * 1000,
+      location: { lat: () => 32.085300, lng: () => 34.781769 },
+      radius: 200 * 1000,
+
+
     },
   });
-
-  // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service#AutocompletionRequest
 
   const handleInput = (e) => {
     setValue(e.target.value);
@@ -192,14 +228,27 @@ function Search({ panTo }) {
           placeholder="Search your location"
         />
         <ComboboxPopover>
-          <ComboboxList>
-            {status === "OK" &&
-              data.map(({ id, description }) => (
-                <ComboboxOption key={id} value={description} />
-              ))}
-          </ComboboxList>
+          {status === "OK" &&
+            data.map(({ id, description }) => (
+
+              <ComboboxOption key={id} value={description} />
+            ))}
         </ComboboxPopover>
       </Combobox>
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    auth: state.firebase.auth,
+    events: state.firestore.ordered
+
+  }
+}
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect([
+    { collection: 'events' }
+  ])
+)(HomePage)

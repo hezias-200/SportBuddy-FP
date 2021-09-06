@@ -5,19 +5,18 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {createStore,applyMiddleware,compose} from 'redux'
 import thunk from 'redux-thunk'
-import {reduxFirestore} from 'redux-firestore'
-import {reactReduxFirebase} from 'react-redux-firebase'
+import {reduxFirestore,getFirestore} from 'redux-firestore'
+import {reactReduxFirebase,getFirebase} from 'react-redux-firebase'
 import fbConfig from './config/fbConfig'
 import rootReducer from './account/reducers/rootReducer'
 import { Provider } from 'react-redux';
-import { getFirestore } from 'redux-firestore';
-import { getFirebase } from 'react-redux-firebase';
+
 
 const store=createStore(rootReducer,
   compose (
-    applyMiddleware(thunk.withExtraArgument({getFirestore,getFirebase})),
+    applyMiddleware(thunk.withExtraArgument({getFirebase,getFirestore})),
     reduxFirestore(fbConfig),
-    reactReduxFirebase(fbConfig,{attachAuthIsReady:true})
+    reactReduxFirebase(fbConfig,{useFirestoreForProfile:true,userProfile:'users',attachAuthIsReady:true})
   )    
     );
     store.firebaseAuthIsReady.then(()=>{
