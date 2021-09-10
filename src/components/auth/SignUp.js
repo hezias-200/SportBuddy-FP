@@ -21,10 +21,12 @@ export class SignUp extends Component {
   handleSubmit=(e)=>{
     e.preventDefault();
     this.props.signUp(this.state)
+    
   }
   render() {
     const { auth, authError } = this.props; 
-    if(auth.uid) return <Redirect to='/homepage'/>
+    if(auth.uid) return <Redirect to='/createprofile'/>
+
     return (
       <div className="center"  style={{ width: '30rem',margin:'auto', marginTop:"8%" }}>
         <form onSubmit={this.handleSubmit} className="white">

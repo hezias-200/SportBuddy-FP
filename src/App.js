@@ -10,6 +10,7 @@ import MyEvents from './components/MyEvents';
 import MyProfile from './components/MyProfile';
 import Navbar from './components/layout/Navbar';
 import SignUp from './components/auth/SignUp';
+import CreateProfile from './components/CreateProfile';
 // import Register from './Register';
 
 function App() {
@@ -25,6 +26,10 @@ function App() {
         <Route  path='/chat' component={Chat}/>
         <Route  path='/myprofile' component={MyProfile}/>
         <Route  path='/homepage' component={HomePage}/>
+        <Route  path='/createprofile' component={CreateProfile}/>
+        <Route  path='/myevents' component={MyEvents}/>
+
+
         </Switch>
       </div>
     </BrowserRouter>

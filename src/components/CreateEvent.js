@@ -1,5 +1,4 @@
 import { Redirect } from "react-router-dom";
-
 import React from "react";
 import { Dropdown, Selection } from 'react-dropdown-now';
 import 'react-dropdown-now/style.css';
@@ -26,15 +25,16 @@ import {
 
 function CreateEvent(props) {
 
+
     const [state, setState] = React.useState({
         eventName: '',
         startDate: '',
         startWorkOut: '',
-        workOutDuration: '',
+        endWorkout: '',
         numberOfParticipants: '',
         minAge: '',
         activityType: '',
-        gender: '',
+        gender:"",
         description: ''
     });
 
@@ -51,13 +51,33 @@ function CreateEvent(props) {
         e.preventDefault();
         props.createEvent(state)
         alert("Your Event Created Enjoy")
+        props.history.push('/homepage')
 
 
     }
     const handleChange = (e) => {
+       
         setState({
             ...state, [e.target.id]: e.target.value
         })
+    }
+    const handleChangeGender = (e) => {
+        console.log(e.target.id);
+        if(e.target.id=='man'){
+        setState({
+            ...state, [state.gender]:e.target.id
+        })
+    }
+    else if(e.target.id=='women'){
+        setState({
+            ...state, [state.gender]:e.target.id
+        })
+}
+// else if(e.target.id=='women'){
+//     setState({
+//         ...state, [state.gender]:e.target.id
+//     })
+// }
     }
     const { auth } = props;
     if (!auth.uid) return <Redirect to='/' />
@@ -67,25 +87,25 @@ function CreateEvent(props) {
     return (
         <div>
 
-            <Form onSubmit={handleSubmit} className="center" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }}>
+            <Form onSubmit={handleSubmit}  className="center" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }}>
                 <Form.Group className="mb-3" >
                     <Form.Label>Event Name: </Form.Label>
-                    <Form.Control onChange={handleChange} type="text" id="eventName" placeholder="Event Name:" />
+                    <Form.Control  required="required"   onChange={handleChange} type="text" id="eventName" placeholder="Event Name:" />
 
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>Start Date: </Form.Label>
-                    <Form.Control onChange={handleChange} type="date" placeholder="date" id="startDate" />
+                    <Form.Control required="required"  onChange={handleChange} type="date" placeholder="date" id="startDate" />
                 </Form.Group>
                 <Form.Group className="mb-3" >
                     <Form.Label>Start Work Out:</Form.Label>
-                    <Form.Control onChange={handleChange} type="time" placeholder="startWorkOut" id="startWorkOut" />
+                    <Form.Control required="required"  onChange={handleChange} type="time" placeholder="startWorkOut" id="startWorkOut" />
                 </Form.Group>
 
                 <Form.Group className="mb-3" >
                     <Form.Label>End Work Out:</Form.Label>
-                    <Form.Control onChange={handleChange} type="time" placeholder="workOutDuration" id="workOutDuration" />
+                    <Form.Control onChange={handleChange} type="time" placeholder="endWorkout" id="endWorkout" />
 
                 </Form.Group>
 
@@ -97,45 +117,17 @@ function CreateEvent(props) {
                     <Form.Label>Min Age: :</Form.Label>
                     <Form.Control onChange={handleChange} type="number" placeholder="Min Age" id="minAge" />
                 </Form.Group>
-                <Row xs="2">
-                    <label>
-                        <input onChange={handleChange} id="gender" type="checkbox" class="filled-in" />
-                        <span>Man</span>
-                    </label>
-                    <label>
-                        <input onChange={handleChange} id="gender" type="checkbox" class="filled-in" />
-                        <span>Women</span>
-                    </label>
-                </Row>
-
                 <Form.Group className="mb-3" >
                     <Form.Label>Description: </Form.Label>
                     <Form.Control onChange={handleChange} id="description" type="text" placeholder="Description" />
                 </Form.Group>
-                <Dropdown
-                    placeholder="Select an option"
-                    className="my-className"
-                    options={['Football', 'Basketball', 'Yoga', 'StreetWork', 'Running', 'Other']}
-                    value="Football"
-                    onChange={(value) => value}
-                    onSelect={(value) => value} // always fires once a selection happens even if there is no change
-                    id="selectAnOption"
-                />
-
                 <Search panTo={locationSelected} />
                 <Button variant="primary" type="submit">
                     Submit
                 </Button>
-
-
             </Form>
-
         </div>
-
     )
-
-
-
 }
 
 function Search({ panTo }) {
@@ -183,7 +175,6 @@ function Search({ panTo }) {
                 <ComboboxPopover>
                     {status === "OK" &&
                         data.map(({ id, description }) => (
-
                             <ComboboxOption key={id} value={description} />
                         ))}
                 </ComboboxPopover>

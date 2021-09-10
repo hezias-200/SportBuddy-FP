@@ -1,11 +1,10 @@
 import logolocation from '../logolocation.png'
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase';
+import { formatRelative } from 'date-fns'
 import { compose } from 'redux';
-
-
 import {
   GoogleMap,
   useLoadScript,
@@ -23,93 +22,104 @@ import {
   ComboboxList,
   ComboboxOption,
 } from "@reach/combobox";
-import { formatRelative } from "date-fns";
-
 import "@reach/combobox/styles.css";
-import mapStyles from './mapStyles'
+
 
 const libraries = ["places"];
 const mapContainerStyle = {
-  height: "80vh",
+  height: "100vw",
   width: "100vw",
 };
 const options = {
-  styles: mapStyles,
+  mapId: 'b154b0fd351ffa30',
   disableDefaultUI: true,
   zoomControl: true,
 };
-const center = {
-  lat: 32.085300,
-  lng: 34.781769,
-};
-const f=[]
-function HomePage(props) {
 
 
-  const { events } = props;
-
-  // for (const [key, value] of Object.entries(events.events)) {
-  //   f[key]['location']=events.events[key].location;
-  // }
-  // for (var key in events.events) {
-  //    f[key]= events.events[key].location{
-  //      latmap:events.events[key].location.latmap,
-  //      lngmap:events.events[key].location.lngmap
-
-  //     }
-  // }
-  // console.log(f);
-  const [markers, setMarkers] = React.useState({
-  });
-
-
-  const onMapClick = React.useCallback((e) => {
-    setMarkers((current) => [
-      ...current,
-      {
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng(),
-        time: new Date(),
-      },
-    ]);
-  }, []);
-  const panTo = React.useCallback(({ lat, lng }) => {
-
-    mapRef.current.panTo({ lat, lng });
-    mapRef.current.setZoom(15);
-  }, []);
+const HomePage = ({ event, auth, events, ...props }) => {
+  console.log(events);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
     libraries,
   });
 
-  const [selected, setSelected] = React.useState(null);
+  const [mapRef, setMapRef] = useState(null);
+  const [center, setCenter] = useState({
+    lat: 32.085300,
+    lng: 34.781769,
+  });
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [markerMap, setMarkerMap] = useState({});
+  const [zoom, setZoom] = useState(5);
+  const [infoOpen, setInfoOpen] = useState(false);
 
 
-  const mapRef = React.useRef();
-  const onMapLoad = React.useCallback((map) => {
-    mapRef.current = map;
-  }, []);
-
-
-
-  if (loadError) return "Error";
-  if (!isLoaded) return "Loading...";
-
-  const { auth } = props;
-  if (!auth.uid) return <Redirect to='/' />
-
-  const handleOnLoad = (map) => {
+  const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds();
-    f.forEach(({ position }) => bounds.extend(position));
+    events.map(place => {
+      bounds.extend(place.pos);
+      return place.id;
+    });
     map.fitBounds(bounds);
   };
 
+  const panTo = useCallback(({ lat, lng }) => {
+    setCenter({ lat, lng })
+  }, []);
 
+  const markerClickHandler = (event, place) => {
+    // Remember which place was clicked
+    console.log(place);
+    setSelectedPlace(place);
+    // Required so clicking a 2nd marker works as expected
+    if (infoOpen) {
+      setInfoOpen(false);
+    }
+
+    setInfoOpen(true);
+
+    // If you want to zoom in a little on marker click
+    if (zoom < 13) {
+      setZoom(13);
+    }
+
+    // if you want to center the selected Marker
+    // setCenter(place.pos)
+  };
+
+  const handleOnLoad = (map) => {
+    // Store a reference to the google map instance in state
+    setMapRef(map);
+    // Fit map bounds to contain all markers
+    fitBounds(map);
+
+  };
+
+  // const onMapLoad = useCallback((map) => {
+  //   mapRef.current = map;
+  // }, []);
+
+  const markerLoadHandler = (marker, place) => {
+    return setMarkerMap(prevState => {
+      return { ...prevState, [place.id]: marker };
+    });
+  };
+
+  if (loadError) return "Error";
+  if (!isLoaded) return "Loading...";
+  if (!auth.uid) return <Redirect to='/' />
+
+  const handleJoin=(id)=>{
+    console.log(id);
+    console.log(auth.uid);
+
+  }
   return (
-    <div>
+    <>
       <Search panTo={panTo} />
+      <Locate panTo={panTo} />
       <GoogleMap
         id="map"
         mapContainerStyle={mapContainerStyle}
@@ -119,50 +129,78 @@ function HomePage(props) {
         onLoad={handleOnLoad}
 
       >
-        {/* {f.map((marker) => (
-          
+        {events.map(place => (
           <Marker
-            key={`${marker.lat}-${marker.lng}`}
-            position={{ lat: marker.lat, lng: marker.lng }}
-            onClick={() => {
-              setSelected(marker);
-            }}
+            key={place.id}
+            position={place.pos}
+            onLoad={marker => markerLoadHandler(marker, place)}
+            onClick={(event) => markerClickHandler(event, place)}
+            // Not required, but if you want a custom icon:
             icon={{
-              iconUrl: { logolocation },
-              origin: new window.google.maps.Point(0, 0),
-              anchor: new window.google.maps.Point(15, 15),
-              scaledSize: new window.google.maps.Size(30, 30),
+              path:
+                "M12.75 0l-2.25 2.25 2.25 2.25-5.25 6h-5.25l4.125 4.125-6.375 8.452v0.923h0.923l8.452-6.375 4.125 4.125v-5.25l6-5.25 2.25 2.25 2.25-2.25-11.25-11.25zM10.5 12.75l-1.5-1.5 5.25-5.25 1.5 1.5-5.25 5.25z",
+              fillColor: "#0000ff",
+              fillOpacity: 1.0,
+              strokeWeight: 0,
+              scale: 1.25
             }}
           />
-        )) }
-
-        {selected ? (
+        ))}
+        {infoOpen && selectedPlace && (
           <InfoWindow
-            position={{ lat: selected.lat, lng: selected.lng }}
-            onCloseClick={() => {
-              setSelected(null);
-            }}
+            anchor={markerMap[selectedPlace.id]}
+            onCloseClick={() => setInfoOpen(false)}
           >
             <div>
-              <h2>
-                <span role="img" aria-label="bear">
-                  🐻
-                </span>{" "}
-                Alert
-              </h2>
-              <p>Spotted {formatRelative(selected.time, new Date())}</p>
+              <h3>{selectedPlace.eventName}</h3>
+              <p>התחלה: {selectedPlace.startWorkOut} </p>
+              <p>תיאור: {selectedPlace.description}</p>
+              <p>מספר משתתפים: {selectedPlace.numberOfParticipants}</p>
+              <p>גיל מינימום: {selectedPlace.minAge}</p>
+              <button onClick={marker => handleJoin(selectedPlace)}>Join Me</button>
             </div>
           </InfoWindow>
-        ) : null} */}
-        {f.map((x)=>{
-          console.log(x.latmap);
-          <Marker
-          position={x}/>
-        }) }
+        )}
       </GoogleMap>
-    </div>
+    </>
   );
 }
+const mapStateToProps = (state) => {
+
+  const { events } = state.firestore.data
+  let tempEvents = [];
+  if (events) {
+    for (let key in events) {
+      if (events[key].location)
+        tempEvents.push(
+          {
+            id: key,
+            eventName: events[key].eventName,
+            description: events[key].description,
+            authorId: events[key].authorId,
+            pos: { lat: events[key].location.latmap, lng: events[key].location.lngmap },
+            startWorkOut: events[key].startWorkOut,
+            numberOfParticipants: events[key].numberOfParticipants,
+            minAge: events[key].minAge
+          }
+        )
+    }
+  }
+  return {
+    auth: state.firebase.auth,
+    events: tempEvents || []
+
+  }
+}
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect([
+    { collection: 'events' }
+  ])
+)(HomePage)
+
+
+
 
 function Locate({ panTo }) {
   return (
@@ -239,16 +277,3 @@ function Search({ panTo }) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    auth: state.firebase.auth,
-    events: state.firestore.ordered
-
-  }
-}
-export default compose(
-  connect(mapStateToProps),
-  firestoreConnect([
-    { collection: 'events' }
-  ])
-)(HomePage)

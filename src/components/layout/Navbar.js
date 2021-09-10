@@ -17,6 +17,8 @@ const Navbar = (props) => {
                 </a>
                 {links}
             </div>
+            <h5 className="left" style={{color: "blue"}} >Hello {props.profile.firstName} {props.profile.lastName} </h5>
+
         </nav>
     )
 }
