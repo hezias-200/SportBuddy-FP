@@ -1,5 +1,4 @@
 import { Redirect } from "react-router-dom";
-
 import React from "react";
 import { Dropdown, Selection } from 'react-dropdown-now';
 import 'react-dropdown-now/style.css';

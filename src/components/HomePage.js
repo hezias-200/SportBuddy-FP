@@ -3,8 +3,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase';
-import { formatRelative } from 'date-fns'
 import { compose } from 'redux';
+import { formatRelative } from 'date-fns'
 import {
   GoogleMap,
   useLoadScript,
@@ -36,9 +36,9 @@ const options = {
   zoomControl: true,
 };
 
+export let clickedEvents = [];
 
 const HomePage = ({ event, auth, events, ...props }) => {
-  console.log(events);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
@@ -56,6 +56,9 @@ const HomePage = ({ event, auth, events, ...props }) => {
   const [infoOpen, setInfoOpen] = useState(false);
 
 
+
+
+
   const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds();
     events.map(place => {
@@ -71,7 +74,6 @@ const HomePage = ({ event, auth, events, ...props }) => {
 
   const markerClickHandler = (event, place) => {
     // Remember which place was clicked
-    console.log(place);
     setSelectedPlace(place);
     // Required so clicking a 2nd marker works as expected
     if (infoOpen) {
@@ -97,9 +99,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
 
   };
 
-  // const onMapLoad = useCallback((map) => {
-  //   mapRef.current = map;
-  // }, []);
+
 
   const markerLoadHandler = (marker, place) => {
     return setMarkerMap(prevState => {
@@ -111,9 +111,9 @@ const HomePage = ({ event, auth, events, ...props }) => {
   if (!isLoaded) return "Loading...";
   if (!auth.uid) return <Redirect to='/' />
 
-  const handleJoin=(id)=>{
-    console.log(id);
-    console.log(auth.uid);
+  const handleJoin = (id) => {
+    clickedEvents.push(id)
+    console.log(clickedEvents);
 
   }
   return (
@@ -157,7 +157,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
               <p>תיאור: {selectedPlace.description}</p>
               <p>מספר משתתפים: {selectedPlace.numberOfParticipants}</p>
               <p>גיל מינימום: {selectedPlace.minAge}</p>
-              <button onClick={marker => handleJoin(selectedPlace)}>Join Me</button>
+              {(selectedPlace.authorId == auth.uid) ? <button onClick={marker => handleJoin(selectedPlace)}>Join Me</button> : null  }
             </div>
           </InfoWindow>
         )}
@@ -165,43 +165,6 @@ const HomePage = ({ event, auth, events, ...props }) => {
     </>
   );
 }
-const mapStateToProps = (state) => {
-
-  const { events } = state.firestore.data
-  let tempEvents = [];
-  if (events) {
-    for (let key in events) {
-      if (events[key].location)
-        tempEvents.push(
-          {
-            id: key,
-            eventName: events[key].eventName,
-            description: events[key].description,
-            authorId: events[key].authorId,
-            pos: { lat: events[key].location.latmap, lng: events[key].location.lngmap },
-            startWorkOut: events[key].startWorkOut,
-            numberOfParticipants: events[key].numberOfParticipants,
-            minAge: events[key].minAge
-          }
-        )
-    }
-  }
-  return {
-    auth: state.firebase.auth,
-    events: tempEvents || []
-
-  }
-}
-export default compose(
-  connect(mapStateToProps),
-  firestoreConnect([
-    { collection: 'events' }
-  ])
-)(HomePage)
-
-
-
-
 function Locate({ panTo }) {
   return (
     <button
@@ -276,4 +239,43 @@ function Search({ panTo }) {
     </div>
   );
 }
+const mapStateToProps = (state) => {
+
+  const { events } = state.firestore.data
+  let tempEvents = [];
+  if (events) {
+    for (let key in events) {
+      if (events[key].location)
+        tempEvents.push(
+          {
+            id: key,
+            eventName: events[key].eventName,
+            description: events[key].description,
+            authorId: events[key].authorId,
+            pos: { lat: events[key].location.latmap, lng: events[key].location.lngmap },
+            startWorkOut: events[key].startWorkOut,
+            numberOfParticipants: events[key].numberOfParticipants,
+            minAge: events[key].minAge
+          }
+        )
+    }
+  }
+  return {
+    auth: state.firebase.auth,
+    events: tempEvents || []
+
+
+  }
+}
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect([
+    { collection: 'events' }
+  ])
+)(HomePage)
+
+
+
+
+
 
