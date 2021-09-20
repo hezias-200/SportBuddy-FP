@@ -2,8 +2,9 @@ import logolocation from '../logolocation.png'
 import React, { useEffect, useState, useCallback } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux'
-import { firestoreConnect } from 'react-redux-firebase';
+import { firestoreConnect, firebase } from 'react-redux-firebase';
 import { compose } from 'redux';
+
 import { formatRelative } from 'date-fns'
 import {
   GoogleMap,
@@ -39,7 +40,6 @@ const options = {
 export let clickedEvents = [];
 
 const HomePage = ({ event, auth, events, ...props }) => {
-
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
     libraries,
@@ -54,6 +54,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
   const [markerMap, setMarkerMap] = useState({});
   const [zoom, setZoom] = useState(5);
   const [infoOpen, setInfoOpen] = useState(false);
+
 
 
 
@@ -111,10 +112,18 @@ const HomePage = ({ event, auth, events, ...props }) => {
   if (!isLoaded) return "Loading...";
   if (!auth.uid) return <Redirect to='/' />
 
-  const handleJoin = (id) => {
-    clickedEvents.push(id)
-    console.log(clickedEvents);
+  const handleJoin = (clickEvent) => {
+    // console.log(auth);
+    // console.log(clickEvent);
 
+    events.map(e => {
+      if (e.id == clickEvent.id) {
+        props.firestore.collection('events').doc(e.id).update({
+          "numberOfParticipants": [...e.numberOfParticipants, auth.uid]
+
+        })
+      }
+    })
   }
   return (
     <>
@@ -155,9 +164,9 @@ const HomePage = ({ event, auth, events, ...props }) => {
               <h3>{selectedPlace.eventName}</h3>
               <p>התחלה: {selectedPlace.startWorkOut} </p>
               <p>תיאור: {selectedPlace.description}</p>
-              <p>מספר משתתפים: {selectedPlace.numberOfParticipants}</p>
+              <p>מספר משתתפים: {selectedPlace.numberOfParticipants.length}</p>
               <p>גיל מינימום: {selectedPlace.minAge}</p>
-              {(selectedPlace.authorId == auth.uid) ? <button onClick={marker => handleJoin(selectedPlace)}>Join Me</button> : null  }
+              {(selectedPlace.authorId != auth.uid) ? <button onClick={() => handleJoin(selectedPlace)}>Join Me</button> : null}
             </div>
           </InfoWindow>
         )}
@@ -240,8 +249,8 @@ function Search({ panTo }) {
   );
 }
 const mapStateToProps = (state) => {
-
   const { events } = state.firestore.data
+  console.log(events);
   let tempEvents = [];
   if (events) {
     for (let key in events) {
@@ -249,9 +258,10 @@ const mapStateToProps = (state) => {
         tempEvents.push(
           {
             id: key,
+            authorId: events[key].authorId,
+            authorName: events[key].authorName,
             eventName: events[key].eventName,
             description: events[key].description,
-            authorId: events[key].authorId,
             pos: { lat: events[key].location.latmap, lng: events[key].location.lngmap },
             startWorkOut: events[key].startWorkOut,
             numberOfParticipants: events[key].numberOfParticipants,

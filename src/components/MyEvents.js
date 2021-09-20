@@ -1,40 +1,39 @@
 
 import { connect } from 'react-redux'
-import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
+import { firestoreConnect } from 'react-redux-firebase';
 import { Redirect } from "react-router-dom";
 import { clickedEvents } from "./HomePage"
 
-function MyEvents(props) {
-    console.log(clickedEvents);
+function MyEvents({auth,events}) {
+    // console.log(props.firestore.collection);
+    // props.map(e => { 
+    //     console.log(e);
+    //     //   props.firestore.collection('events').doc(e.id).update({
+    //     //    "numberOfParticipants":[...e.numberOfParticipants,auth.uid] 
+    //   })
 
 
-    const { auth } = props;
+    
+    // const { events } = props.firestore.data
+
     if (!auth.uid) return <Redirect to='/' />
     return (
         <div>
-            {props.events.map(specificEvent => (
+            {events.map(specificEvent => (
                 <div class="card" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }} >
                     <div class="card-body">
                         <h5 class="card-title">{specificEvent.eventName}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{specificEvent.startWorkOut}</h6>
                         <p class="card-text">{specificEvent.description}</p>
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                            <button type="button" class="btn btn-warning card-link">Edit</button>
+                        {(specificEvent.authorId == auth.uid) ?<button type="button" class="btn btn-warning card-link">Edit</button>:null}
                             <button type="button" class="btn btn-danger card-link">Delete</button>
                         </div>
                     </div>
                 </div>
             ))}
-            {/* {clickedEvents.map(clickedEvent => (
-                <div class="card" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }} >
-                    <div class="card-body">
-                        <h5 class="card-title">{clickedEvent.eventName}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{clickedEvent.startWorkOut}</h6>
-                        <p class="card-text">{clickedEvent.description}</p>
-                    </div>
-                </div>
-            ))} */}
+
         </div>
     )
 }
@@ -44,13 +43,29 @@ const mapStateToProps = (state) => {
 
     const { events } = state.firestore.data
 
-    console.log(state);
     let tempEvents = [];
     if (events) {
         for (let key in events) {
-            if ( events[key].authorId == state.firebase.auth.uid )
+            events[key].numberOfParticipants.map(moreEventsIJoined=>{
+                if(state.firebase.auth.uid==moreEventsIJoined){
+                    tempEvents.push(
+                        {
+                            authorName:events[key].authorName,
+                            eventName: events[key].eventName,
+                            description: events[key].description,
+                            authorId: events[key].authorId,
+                            startWorkOut: events[key].startWorkOut,
+                            numberOfParticipants: events[key].numberOfParticipants,
+                            minAge: events[key].minAge
+                        }
+                    )
+
+                }
+            })
+            if ( events[key].authorId == state.firebase.auth.uid ){
                 tempEvents.push(
                     {
+                        authorName:events[key].authorName,
                         eventName: events[key].eventName,
                         description: events[key].description,
                         authorId: events[key].authorId,
@@ -59,6 +74,8 @@ const mapStateToProps = (state) => {
                         minAge: events[key].minAge
                     }
                 )
+            }
+
         }
     }
     return {

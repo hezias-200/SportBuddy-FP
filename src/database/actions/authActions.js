@@ -22,15 +22,17 @@ export const signOut = () => {
         });
     }
 }
-export const createProfile=(profilePropety,user)=>{
-    return(dispatch,getState,{getFirebase,getFirestore})=>{
-        const firestore=getFirestore();
-        const profile=getState().firebase.profile;
-        const autorId=getState().firebase.auth.uid;
-
-        firestore.collection('events').add({
+export const createProfile = (user) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        const firestore = getFirestore();
+        const profile = getState().firebase.profile;
+        const autorId = getState().firebase.auth.uid;
+        firestore.collection('users').doc(autorId).update({
             ...user,
-            photo:user.photo,
+            imgUrl:user.imgUrl,
+            age: user.age,
+            city: user.city,
+            description: user.description,
         }).then(() => {
             dispatch({ type: 'CREATEPROFILE_SUCCESS' })
 
@@ -54,10 +56,7 @@ export const signUp = (newUser) => {
                 initials: newUser.firstName[0] + newUser.lastName[0],
             })
             // })   
-            // photo: newUser.photo,
-            // age: newUser.age,
-            // city: newUser.city,
-            // description: newUser.description
+
 
         }).then(() => {
             dispatch({ type: 'SIGNUP_SUCCESS' })

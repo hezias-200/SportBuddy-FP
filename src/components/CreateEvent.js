@@ -25,15 +25,14 @@ import {
 
 function CreateEvent(props) {
 
-
     const [state, setState] = React.useState({
         eventName: '',
         startDate: '',
         startWorkOut: '',
         endWorkout: '',
-        numberOfParticipants: '',
         minAge: '',
         activityType: '',
+        numberOfParticipants:[],
         gender:"",
         description: ''
     });
@@ -55,11 +54,22 @@ function CreateEvent(props) {
 
 
     }
+    const handleParticipants = (e) => {
+        // setState({
+            //     ...state,numberOfParticipants[ e.target.value]
+            // })  arrayvar: [...this.state.arrayvar, newelement]
+
+            // setState({
+            //     numberOfParticipants: [...state.numberOfParticipants,5]
+            // })
+            // console.log(state);
+    }
     const handleChange = (e) => {
-       
+        
         setState({
             ...state, [e.target.id]: e.target.value
         })
+        console.log(state);
     }
     const handleChangeGender = (e) => {
         console.log(e.target.id);
@@ -109,10 +119,10 @@ function CreateEvent(props) {
 
                 </Form.Group>
 
-                <Form.Group className="mb-3" >
+                {/* <Form.Group className="mb-3" >
                     <Form.Label>numberOfParticipants:</Form.Label>
-                    <Form.Control onChange={handleChange} type="number" placeholder="numberOfParticipants" id="workOutDuration" />
-                </Form.Group>
+                    <Form.Control onChange={handleParticipants} type="number" placeholder="numberOfParticipants" id="numberOfParticipants" />
+                </Form.Group> */}
                 <Form.Group className="mb-3" >
                     <Form.Label>Min Age: :</Form.Label>
                     <Form.Control onChange={handleChange} type="number" placeholder="Min Age" id="minAge" />
