@@ -4,29 +4,32 @@ import ListGroupItem from 'react-bootstrap/ListGroupItem'
 import { connect } from 'react-redux'
 import { Redirect, NavLink, Route } from "react-router-dom";
 import { compose } from 'redux';
-import { firestoreConnect } from 'react-redux-firebase';
+import { firestoreConnect, useFirebase } from 'react-redux-firebase';
 import { storage } from "../config/fbConfig";
+import React from "react";
 
 // Create a reference to the file whose metadata we want to retrieve
 
 
 
 const MyProfile = (props) => {
-    
-    
+
     const { auth } = props;
     const { profile } = props
+    const [url, setUrl] =React.useState("");
+
+   storage
+    .ref(`users/${auth.uid}`)
+    .child(`${profile.imgUrl}`)
+    .getDownloadURL().then(url=>{
+        setUrl(url);  
+    })
     
-    // const h=storage.ref(`users/${auth.uid}`)
-    // console.log(h);
-
-
-
     if (!auth.uid) return <Redirect to='/' />
     return (
         <div>
             <Card className="center" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }}>
-                <Card.Img variant="top" src="https://www.countrys.co.il/wp-content/uploads/2019/05/50036231_2783372865221277_3168270556759851008_o-1024x768.jpg" />
+                <Card.Img variant="top" src={`${url}`} />
                 <Card.Body>
                     <Card.Title>{profile.firstName} {profile.lastName}</Card.Title>
                     <Card.Text>
@@ -43,6 +46,7 @@ const MyProfile = (props) => {
     )
 }
 const mapStateToProps = (state) => {
+    console.log(state);
     const userUid = state.firebase.auth.uid
     const { users } = state.firestore.data
     let profileUser = null;
@@ -50,11 +54,12 @@ const mapStateToProps = (state) => {
         if (user == userUid) {
             profileUser = {
                 firstName: users[user].firstName,
-                imageName:users[user].imageName,
+                imageName: users[user].imageName,
                 lastName: users[user].lastName,
                 age: users[user].age,
                 city: users[user].city,
-                description: users[user].description
+                description: users[user].description,
+                imgUrl:users[user].imgUrl
             }
         }
 

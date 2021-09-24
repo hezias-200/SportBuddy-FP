@@ -5,7 +5,7 @@ import 'react-dropdown-now/style.css';
 import Form from 'react-bootstrap/Form'
 import { Row } from "react-bootstrap";
 import Button from 'react-bootstrap/Button'
-import { createEvent } from "../account/actions/projectActions";
+import { createEvent } from "../database/actions/projectActions";
 import { Component } from "react";
 import { connect } from 'react-redux'
 import usePlacesAutocomplete, {

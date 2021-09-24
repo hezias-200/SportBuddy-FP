@@ -30,8 +30,11 @@ function CreateProfile(props) {
         if (e.target.files[0]) {
             setImage(e.target.files[0]);
         }
-        
-        
+        setState({
+            ...state,
+            imgUrl:e.target.files[0].name
+        })
+ 
     };
     const handleUpload = () => {
         const uploadTask = storage.ref(`users/${auth.uid}/${image.name}`).put(image);
@@ -52,16 +55,11 @@ function CreateProfile(props) {
               .child(image.name)
               .getDownloadURL()
               .then(url => {
-            setUrl(url);
-            setState({
-                ...state,
-                imgUrl:`${url}`
-            })
-                       
+            setUrl(url);              
         });
     }
   );
-
+    
 };
 
 
