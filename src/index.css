@@ -34,18 +34,39 @@ code {
   z-index: 10;
 }
 
+
+/* .search input:hover {
+  background-color: white;
+}
+
+
 .search input {
   padding: 0.5rem;
   font-size: 1.5rem;
   width: 100%;
+  background-color: transparent;
+  border:black;
+  border-width: 2px;
+  border-bottom:9px;
+  font: optional;
+  
+} */
+.locate:hover {
+  color: white;
+  background-color: white;
 }
 
 .locate {
+
   position: absolute;
-  top: 1rem;
+  top: 6rem;
   right: 1rem;
   background: none;
-  border: none;
+  border:black;
+  border-radius: 30%;
+  border-width: 2px;
+
+  border-style: solid;
   z-index: 10;
 }
 .locate img {

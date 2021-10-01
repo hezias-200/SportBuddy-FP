@@ -11,7 +11,6 @@ import MyProfile from './components/MyProfile';
 import Navbar from './components/layout/Navbar';
 import SignUp from './components/auth/SignUp';
 import CreateProfile from './components/CreateProfile';
-// import Register from './Register';
 
 function App() {
 

@@ -13,7 +13,7 @@ import React from "react";
 
 
 const MyProfile = (props) => {
-
+console.log(props);
     const { auth } = props;
     const { profile } = props
     const [url, setUrl] =React.useState("");
@@ -28,17 +28,17 @@ const MyProfile = (props) => {
     if (!auth.uid) return <Redirect to='/' />
     return (
         <div>
-            <Card className="center" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }}>
-                <Card.Img variant="top" src={`${url}`} />
+            <Card className="center" style={{ width: '30rem', margin: 'auto', marginTop: "3%", height:"auto" }}>
+                <Card.Img class="profile_img"   src={`${url}`} />
                 <Card.Body>
-                    <Card.Title>{profile.firstName} {profile.lastName}</Card.Title>
-                    <Card.Text>
-                        {profile.description}
-                    </Card.Text>
+                    <Card.Title style={{color:"white",textTransform:'capitalize',textAlign:'center'}}>{profile.firstName} {profile.lastName}</Card.Title>
                 </Card.Body>
                 <ListGroup className="list-group-flush">
-                    <ListGroupItem> {profile.age}</ListGroupItem>
-                    <ListGroupItem> {profile.city}</ListGroupItem>
+
+                    <ListGroupItem>Age: {profile.age}</ListGroupItem>
+                    <ListGroupItem>City:  {profile.city}</ListGroupItem>
+                    <ListGroupItem>Description:  {profile.description}</ListGroupItem>
+
                 </ListGroup>
 
             </Card>

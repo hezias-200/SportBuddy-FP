@@ -40,6 +40,7 @@ const options = {
 export let clickedEvents = [];
 
 const HomePage = ({ event, auth, events, ...props }) => {
+  console.log(auth.displayName);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
     libraries,
@@ -128,7 +129,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
   return (
     <>
       <Search panTo={panTo} />
-      <Locate panTo={panTo} />
+      <Locate  panTo={panTo} />
       <GoogleMap
         id="map"
         mapContainerStyle={mapContainerStyle}
@@ -176,7 +177,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
 }
 function Locate({ panTo }) {
   return (
-    <button
+    <button 
       className="locate"
       onClick={() => {
         navigator.geolocation.getCurrentPosition(
@@ -229,7 +230,7 @@ function Search({ panTo }) {
   };
 
   return (
-    <div className="search">
+    <div class="search">
       <Combobox onSelect={handleSelect}>
         <ComboboxInput
           value={value}
@@ -249,6 +250,7 @@ function Search({ panTo }) {
   );
 }
 const mapStateToProps = (state) => {
+
   const { events } = state.firestore.data
   console.log(events);
   let tempEvents = [];

@@ -21,7 +21,7 @@ function MyEvents({auth,events}) {
     return (
         <div>
             {events.map(specificEvent => (
-                <div class="card" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }} >
+                <div class="card" style={{ width: '30rem', margin: 'auto', marginTop: "2%" }} >
                     <div class="card-body">
                         <h5 class="card-title">{specificEvent.eventName}</h5>
                         <h6 class="card-subtitle mb-2 text-muted">{specificEvent.startWorkOut}</h6>
