@@ -6,7 +6,7 @@ import { useFirebase, isLoaded, isEmpty } from 'react-redux-firebase'
 import SignedInLinks from '../layout/SignedInLinks';
 import SignedOutLinks from '../layout/SignedOutLinks';
 import { withRouter, Redirect } from 'react-router'
-import { Button, ControlLabel, Form, FormControl, FormGroup } from 'react-bootstrap';
+import {  Form, FormControl, FormGroup } from 'react-bootstrap';
 import firebase from '../../config/fbConfig'
 import socialMediaAuth from '../../components/auth/SignInSocialMedia'
 import title from '../../../src/title.png'

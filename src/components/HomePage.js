@@ -133,8 +133,18 @@ const HomePage = ({ event, auth, events, ...props }) => {
       <GoogleMap
         id="map"
         mapContainerStyle={mapContainerStyle}
-        zoom={15}
-        center={center}
+        zoom={12}
+        center={() => {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              panTo({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              });
+            },
+            () => null
+          );
+        }}   
         options={options}
         onLoad={handleOnLoad}
 

@@ -2,12 +2,11 @@ import { Redirect } from "react-router-dom";
 import React from "react";
 import { Dropdown, Selection } from 'react-dropdown-now';
 import 'react-dropdown-now/style.css';
-import Form from 'react-bootstrap/Form'
-import { Row } from "react-bootstrap";
-import Button from 'react-bootstrap/Button'
 import { createEvent } from "../database/actions/projectActions";
 import { Component } from "react";
 import { connect } from 'react-redux'
+import { Form, FormControl, FormGroup, Button } from 'react-bootstrap';
+
 import usePlacesAutocomplete, {
     getGeocode,
     getLatLng,
@@ -32,8 +31,8 @@ function CreateEvent(props) {
         endWorkout: '',
         minAge: '',
         activityType: '',
-        numberOfParticipants:[],
-        gender:"",
+        numberOfParticipants: [],
+        gender: "",
         description: ''
     });
 
@@ -56,16 +55,16 @@ function CreateEvent(props) {
     }
     const handleParticipants = (e) => {
         // setState({
-            //     ...state,numberOfParticipants[ e.target.value]
-            // })  arrayvar: [...this.state.arrayvar, newelement]
+        //     ...state,numberOfParticipants[ e.target.value]
+        // })  arrayvar: [...this.state.arrayvar, newelement]
 
-            // setState({
-            //     numberOfParticipants: [...state.numberOfParticipants,5]
-            // })
-            // console.log(state);
+        // setState({
+        //     numberOfParticipants: [...state.numberOfParticipants,5]
+        // })
+        // console.log(state);
     }
     const handleChange = (e) => {
-        
+
         setState({
             ...state, [e.target.id]: e.target.value
         })
@@ -73,21 +72,21 @@ function CreateEvent(props) {
     }
     const handleChangeGender = (e) => {
         console.log(e.target.id);
-        if(e.target.id=='man'){
-        setState({
-            ...state, [state.gender]:e.target.id
-        })
-    }
-    else if(e.target.id=='women'){
-        setState({
-            ...state, [state.gender]:e.target.id
-        })
-}
-// else if(e.target.id=='women'){
-//     setState({
-//         ...state, [state.gender]:e.target.id
-//     })
-// }
+        if (e.target.id == 'man') {
+            setState({
+                ...state, [state.gender]: e.target.id
+            })
+        }
+        else if (e.target.id == 'women') {
+            setState({
+                ...state, [state.gender]: e.target.id
+            })
+        }
+        // else if(e.target.id=='women'){
+        //     setState({
+        //         ...state, [state.gender]:e.target.id
+        //     })
+        // }
     }
     const { auth } = props;
     if (!auth.uid) return <Redirect to='/' />
@@ -97,8 +96,60 @@ function CreateEvent(props) {
     return (
         <div>
 
-            <Form onSubmit={handleSubmit}  className="center" style={{ width: '30rem', margin: 'auto', marginTop: "8%" }}>
-                <Form.Group className="mb-3" >
+            <Form onSubmit={handleSubmit} className="center" style={{ width: '30rem', margin: 'auto', marginTop: "2%" }}>
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>1</i></span>
+                    </div>
+                    <FormControl required id="eventName" type="text" onChange={handleChange} placeholder="Event Name" />
+                </FormGroup>
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>2</i></span>
+                    </div>
+                    <FormControl required id="startDate" type="date" onChange={handleChange} placeholder="Event Date" />
+                </FormGroup>
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>3</i></span>
+                    </div>
+                    <FormControl required id="startWorkOut" type="time" onChange={handleChange} placeholder="Start Time" />
+                </FormGroup>
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>4</i></span>
+                    </div>
+                    <FormControl required id="endWorkout" type="time" onChange={handleChange} placeholder="Finish Time" />
+                </FormGroup>
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>5</i></span>
+                    </div>
+                    <FormControl required id="numberOfParticipants" type="number" onChange={handleChange} placeholder="Max Participants" />
+                </FormGroup>
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>6</i></span>
+                    </div>
+                    <FormControl required id="minAge" type="number" onChange={handleChange} placeholder="Min Age" />
+                </FormGroup>
+
+                <Search required panTo={locationSelected} />
+
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>8</i></span>
+                    </div>
+                    <FormControl required id="description" type="text" onChange={handleChange} placeholder="Description" />
+                </FormGroup>
+                <div class="form-group" style={{ textAlign: 'center' }}>
+                    <input type="submit" value="Create Event" class=" btn  btn-warning  " />
+                </div>
+
+
+
+
+                {/* <Form.Group className="mb-3" >
                     <Form.Label>Event Name: </Form.Label>
                     <Form.Control  required="required"   onChange={handleChange} type="text" id="eventName" placeholder="Event Name:" />
 
@@ -122,7 +173,7 @@ function CreateEvent(props) {
                 {/* <Form.Group className="mb-3" >
                     <Form.Label>numberOfParticipants:</Form.Label>
                     <Form.Control onChange={handleParticipants} type="number" placeholder="numberOfParticipants" id="numberOfParticipants" />
-                </Form.Group> */}
+                </Form.Group> 
                 <Form.Group className="mb-3" >
                     <Form.Label>Min Age: :</Form.Label>
                     <Form.Control onChange={handleChange} type="number" placeholder="Min Age" id="minAge" />
@@ -134,7 +185,7 @@ function CreateEvent(props) {
                 <Search panTo={locationSelected} />
                 <Button variant="primary" type="submit">
                     Submit
-                </Button>
+                </Button> */}
             </Form>
         </div>
     )
@@ -174,14 +225,22 @@ function Search({ panTo }) {
     };
 
     return (
-        <div >
+        <div>
             <Combobox onSelect={handleSelect}>
-                <ComboboxInput
-                    value={value}
-                    onChange={handleInput}
-                    disabled={!ready}
-                    placeholder="Search your location"
-                />
+
+                <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>7</i></span>
+                    </div>
+                    <ComboboxInput className='form-control'
+                        value={value}
+                        onChange={handleInput}
+                        disabled={!ready}
+                        placeholder="Search your location"
+                    />
+                </FormGroup>
+
+
                 <ComboboxPopover>
                     {status === "OK" &&
                         data.map(({ id, description }) => (
