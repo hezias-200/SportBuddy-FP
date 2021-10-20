@@ -1,0 +1,90 @@
+.imgChat {
+  border-radius: 50%;
+  height: 30px;
+  margin-top: -20px;
+  border: 2px solid black;
+
+
+}
+.pChat {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.sent {
+  background-color: #395dff;
+  color: white;
+  border-top-right-radius: 500px;
+  flex-direction: row-reverse;
+  text-align: end;
+  float: right;
+  height: 35px;
+}
+.msg {
+  display: flex;
+  padding: 20px 2px 0px 4px;
+  margin: 10px;
+  border-radius: 1000px;
+  box-shadow: 0 0 10px rgb(164, 164, 164);
+  align-items: center;
+}
+.received {
+  border: 1px solid lightgray;
+  background-color: #FAFAFA;
+  border-top-left-radius: 500px;
+  float: left;
+  height: 35px;
+}
+.sendMsg {
+  width:100%;
+  position: relative;
+  display: flex;
+  bottom: 0;
+  z-index: 1;
+  border-top: 1px solid lightgray;
+  padding: 10px;
+  padding-bottom: 30px;
+  background-color: #fafafa;
+}
+
+.msgs {
+  width:   80%;
+  background-color: white;
+  margin:auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+@media (max-width: 775px) {
+  .pChat {
+    font-size: 20px;
+  }
+  .sent {
+    padding: 10px 10px 0 10px;
+  }
+  .received {
+    padding: 10px 10px 0 10px;
+  }
+  .imgChat {
+    height: 35px;
+    margin-top: -10px;
+  }
+}
+
+@media (max-width: 500px) {
+  .pChat {
+    font-size: 15px;
+  }
+  .sent {
+    padding: 7px 7px 0 7px;
+  }
+  .received {
+    padding: 7px 7px 0 7px;
+  }
+  .imgChat {
+    height: 30px;
+    margin-top: -7px;
+  }
+}

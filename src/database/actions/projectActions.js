@@ -4,14 +4,12 @@ export const createEvent=(event)=>{
         const firestore=getFirestore();
         const profile=getState().firebase.profile;
         const autorId=getState().firebase.auth.uid;
-
         firestore.collection('events').add({
             ...event,
             authorName:profile.firstName,
             authorId:autorId,
             createAt:new Date()
         }).then(()=>{
-            
             dispatch({type:'CREATE_EVENT',event});
 
         }).catch((err)=>{
@@ -26,15 +24,12 @@ export const chat=(messages)=>{
         const firestore=getFirestore();
         const profile=getState().firebase.profile;
         const autorId=getState().firebase.auth.uid;
-
         firestore.collection('messages').add({
             ...messages,
             authorId:autorId,
             createAt:new Date()
         }).then(()=>{
-            
             dispatch({type:'CREATE_EVENT',messages});
-
         }).catch((err)=>{
             dispatch({type:'CREATE_EVENT_ERROR',err})
         })

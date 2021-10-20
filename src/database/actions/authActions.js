@@ -1,3 +1,4 @@
+
 export const signIn = (credentials) => {
     return (dispatch, getState, { getFirebase }) => {
         const firebase = getFirebase();
@@ -20,18 +21,34 @@ export const signOut = () => {
         });
     }
 }
+export const editEvent = (event) => {
+    return (dispatch, getState, { getFirebase, getFirestore }) => {
+        const firestore = getFirestore();
+        const profile = getState().firebase.profile;
+        const autorId = getState().firebase.auth.uid;
+        firestore.collection('events').doc(event.eventId).update({
+            ... event
+        }).then(() => {
+            dispatch({ type: 'EDITEVENT_SUCCESS' })
+
+        }).catch(err => {
+            dispatch({ type: 'EDITEVENT_ERROR', err })
+        })
+    }
+}
 export const createProfile = (user) => {
     return (dispatch, getState, { getFirebase, getFirestore }) => {
         const firestore = getFirestore();
         const profile = getState().firebase.profile;
         const autorId = getState().firebase.auth.uid;
+        console.log(user);
         firestore.collection('users').doc(autorId).update({
             ...user,
-            imgUrl:user.imgUrl,
             age: user.age,
             city: user.city,
             description: user.description,
             phone: user.phone,
+            uid: user.uid
         }).then(() => {
             dispatch({ type: 'CREATEPROFILE_SUCCESS' })
 
@@ -49,21 +66,14 @@ export const signUp = (newUser) => {
             newUser.password
         ).then((resp) => {
             return firestore.collection('users').doc(resp.user.uid).set({
-
                 firstName: newUser.firstName,
                 lastName: newUser.lastName,
-                initials: newUser.firstName[0] + newUser.lastName[0],
             })
-              
-
-
         }).then(() => {
             dispatch({ type: 'SIGNUP_SUCCESS' })
 
         }).catch(err => {
             dispatch({ type: 'SIGNUP_ERROR', err })
-
-
         })
     }
 }

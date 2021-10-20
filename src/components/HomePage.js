@@ -1,31 +1,14 @@
 import logolocation from '../logolocation.png'
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux'
-import { firestoreConnect, firebase } from 'react-redux-firebase';
+import { firestoreConnect } from 'react-redux-firebase';
 import { compose } from 'redux';
-
-import { formatRelative } from 'date-fns'
-import {
-  GoogleMap,
-  useLoadScript,
-  Marker,
-  InfoWindow,
-} from "@react-google-maps/api";
-import usePlacesAutocomplete, {
-  getGeocode,
-  getLatLng,
-} from "use-places-autocomplete";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxPopover,
-  ComboboxList,
-  ComboboxOption,
-} from "@reach/combobox";
+import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
+import usePlacesAutocomplete, { getGeocode, getLatLng, } from "use-places-autocomplete";
+import { Combobox, ComboboxInput, ComboboxPopover, ComboboxOption } from "@reach/combobox";
 import "@reach/combobox/styles.css";
-
-
+import { format } from 'date-fns';
 const libraries = ["places"];
 const mapContainerStyle = {
   height: "100vw",
@@ -36,16 +19,13 @@ const options = {
   disableDefaultUI: true,
   zoomControl: true,
 };
-
 export let clickedEvents = [];
 
 const HomePage = ({ event, auth, events, ...props }) => {
-  console.log(auth.displayName);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
     libraries,
   });
-
   const [mapRef, setMapRef] = useState(null);
   const [center, setCenter] = useState({
     lat: 32.085300,
@@ -55,11 +35,6 @@ const HomePage = ({ event, auth, events, ...props }) => {
   const [markerMap, setMarkerMap] = useState({});
   const [zoom, setZoom] = useState(5);
   const [infoOpen, setInfoOpen] = useState(false);
-
-
-
-
-
 
   const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds();
@@ -75,109 +50,111 @@ const HomePage = ({ event, auth, events, ...props }) => {
   }, []);
 
   const markerClickHandler = (event, place) => {
-    // Remember which place was clicked
     setSelectedPlace(place);
-    // Required so clicking a 2nd marker works as expected
     if (infoOpen) {
       setInfoOpen(false);
     }
-
-    setInfoOpen(true);
-
-    // If you want to zoom in a little on marker click
+    else
+      setInfoOpen(true);
     if (zoom < 13) {
       setZoom(13);
     }
-
-    // if you want to center the selected Marker
-    // setCenter(place.pos)
   };
-
   const handleOnLoad = (map) => {
-    // Store a reference to the google map instance in state
+
+
+    // fitBounds(map);
     setMapRef(map);
-    // Fit map bounds to contain all markers
-    fitBounds(map);
-
   };
-
-
 
   const markerLoadHandler = (marker, place) => {
     return setMarkerMap(prevState => {
       return { ...prevState, [place.id]: marker };
     });
   };
-
   if (loadError) return "Error";
   if (!isLoaded) return "Loading...";
+
+
   if (!auth.uid) return <Redirect to='/' />
-
-  const handleJoin = (clickEvent) => {
-    // console.log(auth);
-    // console.log(clickEvent);
-
-    events.map(e => {
-      if (e.id == clickEvent.id) {
-        props.firestore.collection('events').doc(e.id).update({
-          "numberOfParticipants": [...e.numberOfParticipants, auth.uid]
-
-        })
-      }
-    })
-  }
   return (
     <>
-      <Search panTo={panTo} />
-      <Locate  panTo={panTo} />
       <GoogleMap
         id="map"
         mapContainerStyle={mapContainerStyle}
         zoom={12}
-        center={() => {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              panTo({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              });
-            },
-            () => null
-          );
-        }}   
+        center={center}
         options={options}
         onLoad={handleOnLoad}
-
       >
+        <Search panTo={panTo} />
+        <Locate panTo={panTo} />
+
         {events.map(place => (
-          <Marker
-            key={place.id}
-            position={place.pos}
-            onLoad={marker => markerLoadHandler(marker, place)}
-            onClick={(event) => markerClickHandler(event, place)}
-            // Not required, but if you want a custom icon:
-            icon={{
-              path:
-                "M12.75 0l-2.25 2.25 2.25 2.25-5.25 6h-5.25l4.125 4.125-6.375 8.452v0.923h0.923l8.452-6.375 4.125 4.125v-5.25l6-5.25 2.25 2.25 2.25-2.25-11.25-11.25zM10.5 12.75l-1.5-1.5 5.25-5.25 1.5 1.5-5.25 5.25z",
-              fillColor: "#0000ff",
-              fillOpacity: 1.0,
-              strokeWeight: 0,
-              scale: 1.25
-            }}
-          />
+          format(new Date(), 'yyyy-MM-dd') != place.startDate ? null :
+            place.freeTraining ?
+              <Marker
+                key={place.id}
+                position={place.pos}
+                onLoad={marker => markerLoadHandler(marker, place)}
+                onClick={(event) => markerClickHandler(event, place)}
+                //https://www.shareicon.net/data/512x512/2015/09/21/644104_sport_512x512.png
+                // https://static.thenounproject.com/png/777035-200.png
+                //https://static.thenounproject.com/png/777025-200.png
+                // https://images.vexels.com/media/users/3/141359/isolated/lists/4aff80f43aa783ac5071aace4a4e0c3a-triathlon-square-icon.png
+                icon={{
+                  url: 'https://www.shareicon.net/data/512x512/2015/09/21/644104_sport_512x512.png',
+                  scaledSize: new window.google.maps.Size(35, 35), // scaled size
+                }}
+              /> :
+              <div>
+                {console.log(format(new Date(), 'yyyy-MM-dd') + "/" + place.startDate)}
+                <Marker
+                  key={place.id}
+                  position={place.pos}
+                  onLoad={marker => markerLoadHandler(marker, place)}
+                  onClick={(event) => markerClickHandler(event, place)}
+                  //https://www.shareicon.net/data/512x512/2016/01/26/709382_bank_512x512.png
+                  icon={{
+                    url: 'https://static.thenounproject.com/png/1380878-200.png',
+                    scaledSize: new window.google.maps.Size(40,40), // scaled size
+                  }}
+                />
+
+              </div>
         ))}
         {infoOpen && selectedPlace && (
           <InfoWindow
             anchor={markerMap[selectedPlace.id]}
             onCloseClick={() => setInfoOpen(false)}
           >
-            <div>
-              <h3>{selectedPlace.eventName}</h3>
-              <p>התחלה: {selectedPlace.startWorkOut} </p>
-              <p>תיאור: {selectedPlace.description}</p>
-              <p>מספר משתתפים: {selectedPlace.numberOfParticipants.length}</p>
-              <p>גיל מינימום: {selectedPlace.minAge}</p>
-              {(selectedPlace.authorId != auth.uid) ? <button onClick={() => handleJoin(selectedPlace)}>Join Me</button> : null}
+            <div style={{ height: 'auto' }}>
+              <div style={{ height: '50%' }}  >
+                {(!selectedPlace.freeTraining) ?
+                  <div>
+                    <span class="input-group-text" style={{ height: 'auto', width: 'auto' }}>
+                      <i className="fas fa-comment-dollar"></i>
+                      <i style={{ marginLeft: '2%' }}>Costs Money</i>
+                    </span>
+                  </div> : null}
+                <h3>{selectedPlace.eventName}</h3>
+              </div>
+              <p>Autor Name: {selectedPlace.authorName} </p>
+              <p>Time: {selectedPlace.startWorkOut}-{selectedPlace.endWorkOut} </p>
+              <p>Date: {selectedPlace.startDate} </p>
+              <p>Descrption: {selectedPlace.description}</p>
+              <p>Number Of Participants: {selectedPlace.numberOfParticipants}</p>
+              <p>Min Age: {selectedPlace.minAge}</p>
+              {(selectedPlace.authorId != auth.uid) ?
+                <a
+                  href={`https://wa.me/${selectedPlace.phone}`}
+                  class="whatsapp_float"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i class="fab fa-whatsapp"></i>
+                </a>
+                : null}
             </div>
           </InfoWindow>
         )}
@@ -187,7 +164,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
 }
 function Locate({ panTo }) {
   return (
-    <button 
+    <button
       className="locate"
       onClick={() => {
         navigator.geolocation.getCurrentPosition(
@@ -217,8 +194,6 @@ function Search({ panTo }) {
     requestOptions: {
       location: { lat: () => 32.085300, lng: () => 34.781769 },
       radius: 200 * 1000,
-
-
     },
   });
 
@@ -246,12 +221,11 @@ function Search({ panTo }) {
           value={value}
           onChange={handleInput}
           disabled={!ready}
-          placeholder="Search your location"
+          placeholder="Search a location"
         />
         <ComboboxPopover>
           {status === "OK" &&
             data.map(({ id, description }) => (
-
               <ComboboxOption key={id} value={description} />
             ))}
         </ComboboxPopover>
@@ -260,9 +234,7 @@ function Search({ panTo }) {
   );
 }
 const mapStateToProps = (state) => {
-
   const { events } = state.firestore.data
-  console.log(events);
   let tempEvents = [];
   if (events) {
     for (let key in events) {
@@ -277,7 +249,11 @@ const mapStateToProps = (state) => {
             pos: { lat: events[key].location.latmap, lng: events[key].location.lngmap },
             startWorkOut: events[key].startWorkOut,
             numberOfParticipants: events[key].numberOfParticipants,
-            minAge: events[key].minAge
+            minAge: events[key].minAge,
+            phone: events[key].phone,
+            freeTraining: events[key].freeTraining,
+            startDate: events[key].startDate,
+            endWorkOut:events[key].endWorkOut
           }
         )
     }
@@ -285,8 +261,6 @@ const mapStateToProps = (state) => {
   return {
     auth: state.firebase.auth,
     events: tempEvents || []
-
-
   }
 }
 export default compose(

@@ -7,10 +7,6 @@
     text-shadow: #79b42b;
     font-size: large;
     width: 100%;
- 
-
-    
-
 }
 .myForm {
     padding: 10px;
@@ -24,11 +20,7 @@
       min-width: 90%;
     }
   }
-.logo{
-    
-    margin-left: 42%; 
 
-}
 .register-account{
     background-color: transparent;
     background-repeat: no-repeat;

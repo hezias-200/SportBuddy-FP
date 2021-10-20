@@ -2,125 +2,86 @@ import React, { useState } from 'react';
 import { Redirect, NavLink, Route } from "react-router-dom";
 import { connect } from 'react-redux'
 import { signOut } from '../../database/actions/authActions';
+import { NavDropdown, Nav, Button } from 'react-bootstrap';
+import Navbar from 'react-bootstrap/Navbar'
 const SignedInLinks = (props) => {
-    const [isOpen, SetIsOpen] = useState(false)
+  const [isOpen, SetIsOpen] = useState(false)
 
-    const { auth } = props;
-    if (!auth.uid) return <Redirect to='/' />
-    return (
-        <div class="container-fluid">
-            <button class="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="homepage">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="createvent">Create Event</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="myevents">Events</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="myprofile">My Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="chat">Chat</a>
-                    </li>
-                    
-                </ul>
-
-
-            
-                {/* {isOpen &&
-                    <div  id="collapseExample" >
-                        <ul class="list-group column" >
-                        <li class="list-group-item"><button onClick={props.signOut} class="btn btn-outline-success" type="submit">Logout</button> </li>
-                            
-                            <li class="list-group-item"><button onClick={props.signOut} class="btn btn-outline-success" type="submit">Logout</button> </li>
-                        </ul> 
-                
-                </div>
-                } */}
-
-
-
-            </div>
-
+  const { auth } = props;
+  if (!auth.uid) return <Redirect to='/' />
+  return (
+    <Navbar.Collapse className="me-auto"  >
+      <Nav.Link href="homepage">
+        <div>
+          <span class="input-group-text" style={{height:'auto', width:'auto' }}>
+            <i className="fas fa-home"></i>
+            <i style={{marginLeft: '4%'}}>Home</i>
+          </span>
+        </div>
+      </Nav.Link>
+      <Nav.Link href="myprofile">
+        <div>
+          <span class="input-group-text" style={{height: 'auto', width: 'auto' }}>
+            <i className="fas fa-user"></i>
+            <i style={{ marginLeft: '4%' }}>My Profile</i>
+          </span>
+        </div>
+      </Nav.Link>
+      <Nav.Link href="chat">
+        <div>
+          <span class="input-group-text" style={{height: 'auto', width: 'auto' }}>
+            <i className="fas fa-comments"></i>
+            <i style={{ marginLeft: '4%' }}>Chat</i>
+          </span>
+        </div>
+      </Nav.Link>
+      <Nav.Link href="createvent">
+        <div>
+          <span class="input-group-text" style={{ height: 'auto', width: 'auto' }}>
+            <i className="fas fa-plus-circle"></i>
+            <i style={{ marginLeft: '4%' }}>Create Event</i>
+          </span>
         </div>
 
-
-        // <div id="div_top_hypers"  >
-        //     <ul id="ul_top_hypers"  >
-        //         <li className="nav-link" >
-        //             <div id="div_top_hypers" class="input-group-prepend-navbar">
-        //                 < span id="div_top_hypers" class="input-group-text">
-        //                     <i class="fas fa-user"></i>
-        //                 </span>
-        //                 <NavLink to='/myevents'>Events</NavLink>
-        //             </div>
-        //         </li>
-        //         <li className="nav-link">
-        //             <div id="div_top_hypers" class="input-group-prepend-navbar ">
-        //                 < span id="div_top_hypers" class="input-group-text">
-        //                     <i class="fas fa-running far fa-heart"></i>
-        //                 </span>
-        //                 <NavLink to='/createvent'>Create Event</NavLink>
-        //             </div>
-        //         </li>
-        //         <li className="nav-link">
-        //             <div id="div_top_hypers" class="input-group-prepend-navbar">
-        //                 < span id="div_top_hypers" class="input-group-text">
-        //                     <i class="far fa-comment"></i>
-        //                 </span>
-        //                 <NavLink className="navlink" to='/chat'>Chat</NavLink>                    </div>
-        //         </li>
-        //         <li className="nav-link">
-        //             <div id="div_top_hypers" class="input-group-prepend-navbar">
-        //                 < span id="div_top_hypers" class="input-group-text">
-        //                     <i class="far fa-id-card"></i>
-        //                 </span>
-        //                 <NavLink to='/myprofile'>Profile</NavLink>
-        //             </div>
-        //         </li>
-        //         <li className="nav-link">
-        //             <div id="div_top_hypers" class="input-group-prepend-navbar">
-        //                 < span id="div_top_hypers" class="input-group-text">
-        //                     <i class="fas fa-running far fa-heart"></i>
-        //                 </span>
-        //                 <NavLink to='/homepage'>Map</NavLink>
-        //             </div>
-        //         </li>
-        //         <li className="nav-link">
-        //             <div id="div_top_hypers" class="input-group-prepend-navbar">
-        //                 < span id="div_top_hypers" class="input-group-text">
-        //                     <i class="fas fa-running far fa-heart"></i>
-        //                 </span>
-        //                 <NavLink to='/'>Settings</NavLink>
-        //             </div>
-        //         </li>
-        //         <li className="nav-link"><a onClick={props.signOut}> Log Out</a> </li>
-        //         <li>
-        //             <NavLink to='/' className='btn btn-floating pink lighten-1' >
-        //                 {props.profile.initials}
-        //             </NavLink>
-        //         </li>
-
-        //     </ul>
-        // </div>
-    )
+      </Nav.Link>
+      <div  class='nav-link'  >
+      <span  style={{ height: '40px', width: 'auto'}} class="input-group-text  " >
+        <i className="fas fa-calendar-alt"></i>
+          <NavDropdown id='colorBlack'  title="Events"  >
+            <NavDropdown.Item  href="allevents">All Events</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item href="myevents">My Events</NavDropdown.Item>
+          </NavDropdown>
+      </span>
+      </div>
+      <div class='nav-link'  style={{marginLeft:'auto'}} >
+      <span  style={{ height: '40px'}}  class="input-group-text" >
+        <i className="fas fa-cog"></i>
+        <i>
+          <NavDropdown id='colorBlack' title="Settings">
+            <NavDropdown.Item href="aboutus">About us</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item href="contactus">Contact Us</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item style={{textAlign:'center'}}>
+              <Button onClick={props.signOut} variant="outline-danger">Logout</Button>
+            </NavDropdown.Item>
+          </NavDropdown>
+        </i>
+      </span>
+      </div>
+    </Navbar.Collapse>
+  )
 }
 
 const mapStateToProps = (state) => {
-    return {
-        auth: state.firebase.auth
-    }
+  return {
+    auth: state.firebase.auth
+  }
 }
 const mapDispatchToProps = (dispatch) => {
-    return {
-        signOut: () => dispatch(signOut()),
-    }
+  return {
+    signOut: () => dispatch(signOut()),
+  }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(SignedInLinks);

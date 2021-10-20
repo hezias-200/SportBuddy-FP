@@ -2,10 +2,48 @@
 
 @import url('https://fonts.googleapis.com/css?family=Numans');
 
+.whatsapp_float {
+    position: relative;
+    background-color: #25d366;
+    color: #FFF;
+    border-radius:30px;
+    border-top-left-radius: 10px;
+    text-align: center;
+    font-size: 20px;
+    width: 40px;
+    height:30px;
+    margin: auto;
+    margin-left: auto;
+}
+
+
+.whatsapp-icon {
+
+    margin: auto;
+}
+
+/* for mobile */
+@media screen and (max-width: 767px) {
+    .whatsapp-icon {
+        margin-top: 10px;
+    }
+    .whatsapp_float {
+        width: 40px;
+        height: 40px;
+        bottom: 20px;
+        right: 10px;
+        font-size: 22px;
+    }
+}
+.phoneInput{
+  height: 100%;
+}
 html,body{
 background-image:url(background.png);
 background-size: cover;
 background-repeat: no-repeat;
+background-attachment: fixed;
+background-position: center;
 height: 100%;
 font-family: 'Numans', sans-serif;
 }
@@ -22,7 +60,7 @@ height: 100%;
 align-content: center;
 margin-top: 4%;
 }
-
+ 
 .card{
 height: 500px;
 margin-top: auto;
@@ -30,6 +68,7 @@ margin-bottom: auto;
 width: 400px;
 background-color: rgba(0,0,0,0.5) !important;
 }
+
 
 .social_icon span{
 font-size: 60px;
@@ -44,6 +83,15 @@ cursor: pointer;
 
 .card-header h3{
 color: white;
+}
+
+#colorBlack{
+    color: black;
+}
+.logo_image{
+    height: auto;
+    width: fit-content;
+
 }
 
 .social_icon{
@@ -76,7 +124,6 @@ border:0 !important;
 
     .navlink{
         font-family:  Tahoma,sans-serif;
-        
         font-size: 25px;
         text-align: center;
         color: white;
@@ -119,4 +166,5 @@ color: white;
 .links a{
 margin-left: 4px;
 }
+
 

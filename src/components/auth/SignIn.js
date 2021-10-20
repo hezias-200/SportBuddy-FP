@@ -1,23 +1,19 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { signIn } from '../../database/actions/authActions'
-import { authError } from '../../account/reducers/authReducer'
-import { useFirebase, isLoaded, isEmpty } from 'react-redux-firebase'
-import SignedInLinks from '../layout/SignedInLinks';
-import SignedOutLinks from '../layout/SignedOutLinks';
-import { withRouter, Redirect } from 'react-router'
-import {  Form, FormControl, FormGroup } from 'react-bootstrap';
+import { Redirect } from 'react-router'
+import { Form, FormControl, FormGroup, InputGroup } from 'react-bootstrap';
 import firebase from '../../config/fbConfig'
 import socialMediaAuth from '../../components/auth/SignInSocialMedia'
 import title from '../../../src/title.png'
-
+import { Link } from 'react-router-dom';
 
 const SignIn = (props) => {
+  console.log(props);
+  const { auth, authError } = props;
   const facebookProvider = new firebase.auth.FacebookAuthProvider();
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   const twiterProvider = new firebase.auth.TwitterAuthProvider();
-
-
   const [state, setState] = React.useState({
     email: "",
     password: ""
@@ -25,23 +21,27 @@ const SignIn = (props) => {
 
   const handleChange = (e) => {
     setState({
-      ...state,[e.target.id]: e.target.value
+      ...state, [e.target.id]: e.target.value
     })
   }
-  const handleSubmit = (e) => {
+
+  const handleSubmit =  (e) => {
     e.preventDefault();
-    props.signIn(state);
-
-
+    props.signIn(state)
+    firebase.auth().signInWithEmailAndPassword(state.email, state.password)
+    .then(() => {
+        props.history.push('/homepage')
+    })
   }
+
   const handleOnClick = async (provider) => {
     const res = await socialMediaAuth(provider)
   }
-  const { auth, authError } = props;
   if (auth.uid) return <Redirect to='/homepage' />
+
   return (
     <div class="container">
-      <div class="d-flex justify-content-center h-100">
+      <div style={{ marginTop: '10%' }} class="d-flex justify-content-center h-100">
         <div class="card">
           <img src={title} alt="" srcset="" />
           <div class="card-header">
@@ -68,9 +68,11 @@ const SignIn = (props) => {
               </FormGroup>
               <div class="form-group">
                 <input type="submit" value="Login" class="btn float-right login_btn" />
-                <div className="red-text center">{authError ? <p>{authError}</p> : null}
+                <div className="red-text center">
+                  {authError ? <p>{authError}</p> :null }
                 </div>
               </div>
+              
             </Form>
           </div>
           <div className="card-footer">
@@ -95,7 +97,6 @@ const mapStateToProps = (state) => {
 
 }
 const mapDispatchToProps = (dispatch) => {
-
   return {
     signIn: (creds) => dispatch(signIn(creds))
 

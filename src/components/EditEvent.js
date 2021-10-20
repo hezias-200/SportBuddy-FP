@@ -1,29 +1,48 @@
 import { Redirect } from "react-router-dom";
 import React from "react";
+import { Dropdown, Selection } from 'react-dropdown-now';
 import 'react-dropdown-now/style.css';
-import { createEvent } from "../database/actions/projectActions";
+import { editEvent } from "../database/actions/authActions";
+import { Component } from "react";
 import { connect } from 'react-redux'
 import { Form, FormControl, FormGroup, Button } from 'react-bootstrap';
-import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
-import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from "@reach/combobox";
+import { compose } from 'redux';
+import { firestoreConnect } from 'react-redux-firebase';
 import PhoneInput from "react-phone-number-input";
-import { format } from 'date-fns';
-function CreateEvent(props) {
-    const [validError, setValidError] = React.useState();
-    const [countryPhone, setCountryPhone] = React.useState()
-    const [clickedFreeTraining, setClickedFreeTraining] = React.useState(false)
-    const [state, setState] = React.useState({
-        eventName: '',
-        startDate: '',
-        startWorkOut: '',
-        endWorkOut: '',
-        minAge: '',
-        numberOfParticipants: null,
-        description: '',
-        locationName: '',
-        freeTraining: true
 
+import usePlacesAutocomplete, {
+    getGeocode,
+    getLatLng,
+} from "use-places-autocomplete";
+
+import {
+    Combobox,
+    ComboboxInput,
+    ComboboxPopover,
+    ComboboxList,
+    ComboboxOption,
+} from "@reach/combobox";
+
+
+
+function EditEvent(props) {
+    const [state, setState] = React.useState({
+        eventName:  props.location.state.detail.eventName ,
+        startDate:  props.location.state.detail.date ,
+        startWorkOut:  props.location.state.detail.startWorkOut ,
+        endWorkOut:  props.location.state.detail.endWorkOut ,
+        minAge:  props.location.state.detail.minAge ,
+        numberOfParticipants:  props.location.state.detail.numberOfParticipants ,
+        description:  props.location.state.detail.description ,
+        locationName:  props.location.state.detail.locationName ,
+        phone:props.location.state.detail.phone ,
+        eventId:props.location.state.detail.eventId,
+        freeTraining:props.location.state.detail.freeTraining,
     });
+    const [countryPhone, setCountryPhone] = React.useState()
+    const [clickedFreeTraining, setClickedFreeTraining] = React.useState(state.freeTraining)
+    console.log(clickedFreeTraining);
+
     const locationSelected = React.useCallback(({ lat, lng }, { address }) => {
         setState({
             ...state,
@@ -35,99 +54,49 @@ function CreateEvent(props) {
             locationName: address
         })
     });
-    const validationEvent =  (e) => {
-        if (format(new Date(), 'yyyy-MM-dd') > state.startDate) {
-            console.log("s");
-            return false
+    const handleCheckbox = () => {
+        if (!clickedFreeTraining) {
+            console.log("sssssss");
+            setClickedFreeTraining(true)
+            setState({
+                ...state, [`freeTraining`]: true
+            })
         }
-        return true;
-    }
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const valid=validationEvent()
-        if(valid){
-            props.createEvent(state)
-            alert("Your Event Created Enjoy")
-            props.history.push('/homepage')
-        }
-        else{
+        else  {
+            setClickedFreeTraining(false)
+            setState({
+                ...state,['freeTraining'] : false
+            })
             
         }
-  
+        console.log(state.freeTraining);
+    }
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        props.editEvent(state)
+        alert("Your Event Edited Enjoy")
+        props.history.push('/homepage')
     }
     const handleChange = (e) => {
         setState({
             ...state, [e.target.id]: e.target.value
         })
     }
-    // const validate = () => {
-    //     let dateError = "The Date Is Invalid";
-    //     let timeError = "The Time Is Invalid";
-    //     if (state.startDate < Date()) {
-    //         setValidError(
-    //             dateError
-    //         )
-    //     }
-    //     else
-    //         setValidError("")
-    //     if (state.endWorkOut < state.startWorkOut) {
-    //         setValidError(
-    //             dateError + "," + timeError
-    //         )
-    //         return false
-    //     }
-    //     else
-    //         setValidError("")
-    //     if (dateError ) {
-    //         return false;
-    //     }
-    //     return true;
-    // };
-    // const ErrorOutput = () => {
-        
-    //          if (state.startDate < Date()) {
-    //             return <span>Letters only</span>
-    //          }
-    //          return <span></span>
-        // if (name === 'firstName') {
-        //     if (!inputValue.match(/^[a-zA-Z]+$/) && inputValue.length > 0) {
-        //         return <span>Letters only</span>
-        //     }
-        //     return <span></span>
-        // }
-        // if (name === 'telNo') {
-        //     if (!inputValue.match(/^[0-9]+$/) && inputValue.length > 0) {
-        //         return <span>Numbers only</span>
-        //     }
-        //     return <span></span>
-        // }
-    // }
     const handlePhone = (e, t) => {
         setState({
             ...state, phone: t
         })
     }
-    const handleCheckbox = () => {
-        if (clickedFreeTraining) {
-            setState({
-                ...state, freeTraining: clickedFreeTraining
-            })
-            setClickedFreeTraining(false)
-        }
-        else {
-            setState({
-                ...state, freeTraining: clickedFreeTraining
-            })
-            setClickedFreeTraining(true)
-        }
-    }
     const { auth } = props;
     if (!auth.uid) return <Redirect to='/' />
+
+
     return (
         <div className="container">
             <Form onSubmit={handleSubmit} className="center" style={{ width: '30rem', margin: 'auto', marginTop: '7%' }}>
                 <div class="card-header">
-                    <h3>Create Event</h3>
+                    <h3>Edit Event</h3>
                 </div>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
@@ -145,44 +114,45 @@ function CreateEvent(props) {
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>3</i></span>
                     </div>
-                    <FormControl required id="startWorkOut" type="time" onChange={handleChange} placeholder="Start Time" />
+                    <FormControl defaultValue={state.startWorkOut}  required id="startWorkOut" type="time" onChange={handleChange} placeholder="Start Time" />
                 </FormGroup>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>4</i></span>
                     </div>
-                    <FormControl required id="endWorkOut" type="time" onChange={handleChange} placeholder="Finish Time" />
+                    <FormControl defaultValue={state.endWorkOut}  required id="endWorkOut" type="time" onChange={handleChange} placeholder="Finish Time" />
                 </FormGroup>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>5</i></span>
                     </div>
-                    <FormControl required id="numberOfParticipants" type="number" onChange={handleChange} placeholder="Max Participants" />
+                    <FormControl defaultValue={state.numberOfParticipants}  required id="numberOfParticipants" type="number" onChange={handleChange} placeholder="Max Participants" />
                 </FormGroup>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>6</i></span>
                     </div>
-                    <FormControl required id="minAge" type="number" onChange={handleChange} placeholder="Min Age" />
+                    <FormControl defaultValue={state.minAge} required id="minAge" type="number" onChange={handleChange} placeholder="Min Age" />
                 </FormGroup>
 
-                <Search panTo={locationSelected} />
+                <Search props={state} panTo={locationSelected} />
 
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>8</i></span>
                     </div>
-                    <FormControl required id="description" type="text" onChange={handleChange} placeholder="Description" />
+                    <FormControl defaultValue={state.description} required id="description" type="text" onChange={handleChange} placeholder="Description" />
                 </FormGroup>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>9</i></span>
                     </div>
-                    <PhoneInput className=" form-control phoneInput" required value={countryPhone}
+                    <PhoneInput  className=" form-control phoneInput"  value={countryPhone}
                         onChange={(e) => handlePhone(setCountryPhone, e)}
-                        placeholder="Enter Phone For Contact" ></PhoneInput>
+                        placeholder={`${state.phone}`} ></PhoneInput>
                 </FormGroup>
-                <FormGroup class="input-group form-group">
+                <FormGroup class="input-group form-group" >
+
                     <Form.Check onChange={() => handleCheckbox()} style={{ marginLeft: 'auto', background: 'white' }}
                         type={'checkbox'}
                         id={`checkbox`}
@@ -192,14 +162,14 @@ function CreateEvent(props) {
                 </FormGroup>
                 <div class="form-group" style={{ textAlign: 'center' }}>
                     <input type="submit" value="Create Event" class=" btn  btn-warning  " />
-                    <div className="red-text center">
-                    </div>
                 </div>
             </Form>
         </div>
     )
 }
-function Search({ panTo }) {
+
+function Search({ props,panTo }) {
+    
     const {
         ready,
         value,
@@ -210,15 +180,18 @@ function Search({ panTo }) {
         requestOptions: {
             location: { lat: () => 32.085300, lng: () => 34.781769 },
             radius: 200 * 1000,
-
         },
     });
+
     const handleInput = (e) => {
         setValue(e.target.value);
     };
+
     const handleSelect = async (address) => {
+
         setValue(address, false);
         clearSuggestions();
+
         try {
             const results = await getGeocode({ address });
             const { lat, lng } = await getLatLng(results[0]);
@@ -228,10 +201,11 @@ function Search({ panTo }) {
             console.log("😱 Error: ", error);
         }
     };
+  
+
     return (
         <div>
             <Combobox onSelect={handleSelect}>
-
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>7</i></span>
@@ -240,7 +214,7 @@ function Search({ panTo }) {
                         value={value}
                         onChange={handleInput}
                         disabled={!ready}
-                        placeholder="Select a location"
+                        placeholder={`${props.locationName}`}
                     />
                 </FormGroup>
                 <ComboboxPopover>
@@ -253,17 +227,28 @@ function Search({ panTo }) {
         </div>
     );
 }
+
+
 const mapStateToProps = (state) => {
-    console.log(state);
+    const { events } = state.firestore.data
+    // console.log(state);
     return {
         auth: state.firebase.auth,
+        data: events
+
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        createEvent: (event) => dispatch(createEvent(event))
+        editEvent: (event) => dispatch(editEvent(event))
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(CreateEvent)
+
+export default compose(
+    connect(mapStateToProps, mapDispatchToProps),
+    firestoreConnect([
+        { collection: 'events' }
+    ])
+)(EditEvent)
 
 

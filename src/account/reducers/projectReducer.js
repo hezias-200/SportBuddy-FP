@@ -1,12 +1,19 @@
-const initState = {}
+const initState = {
+    authError:null
+}
 const projectReducer = (state = initState, action) => {
     switch (action.type) {
         case 'CREATE_EVENT':
             console.log('created event', action.event);
-            return state;
+            return {
+                ...state,
+                authError:null}
         case 'CREATE_EVENT_ERROR':
             console.log('create event EROOR', action.err);
-            return state;
+            return {
+                ...state,
+                authError:"Faild"
+            }
         case 'CREATE_PROFILE':
             console.log('create PROFILE', action.event);
             return state;

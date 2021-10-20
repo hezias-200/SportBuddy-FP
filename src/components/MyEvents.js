@@ -2,86 +2,99 @@
 import { connect } from 'react-redux'
 import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
-import { Redirect } from "react-router-dom";
-import { clickedEvents } from "./HomePage"
+import { Redirect, Link } from "react-router-dom";
+import React from "react";
+import { Accordion, Container, Row, Col } from 'react-bootstrap';
 
-function MyEvents({auth,events}) {
-    // console.log(props.firestore.collection);
-    // props.map(e => { 
-    //     console.log(e);
-    //     //   props.firestore.collection('events').doc(e.id).update({
-    //     //    "numberOfParticipants":[...e.numberOfParticipants,auth.uid] 
-    //   })
-
-
-    
-    // const { events } = props.firestore.data
-
+function MyEvents({ auth, events, firestore }) {
+    const deleteEvent = (specificEvent) => {
+        if (window.confirm("Are You Sure You want to Delete this event?"))
+            firestore.collection('events').doc(`${specificEvent.eventId}`).delete()
+    }
     if (!auth.uid) return <Redirect to='/' />
     return (
-        <div>
+        <div className="container" style={{ marginTop: "5%" }}>
+            <div style={{ textAlign: 'center', color: 'white' }} class="card-header">
+                <h1>My Events</h1>
+            </div>
             {events.map(specificEvent => (
-                <div class="card" style={{ width: '30rem', margin: 'auto', marginTop: "2%" }} >
-                    <div class="card-body">
-                        <h5 class="card-title">{specificEvent.eventName}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">{specificEvent.startWorkOut}</h6>
-                        <p class="card-text">{specificEvent.description}</p>
-                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                        {(specificEvent.authorId == auth.uid) ?<button type="button" class="btn btn-warning card-link">Edit</button>:null}
-                            <button type="button" class="btn btn-danger card-link">Delete</button>
-                        </div>
-                    </div>
+                <div style={{ height: 'auto', width: 'auto', marginTop: "2%" }} >
+                    <Accordion style={{ font: 'small-caps bold 15px/1 sans-serif', textAlign: 'center' }}>
+                        <Accordion.Item eventKey="0"  >
+                            <Accordion.Header  >
+                                <h1 style={{ font: 'small-caps bold 24px/1 sans-serif', textAlign: 'center' }}>{specificEvent.eventName}</h1>
+                            </Accordion.Header>
+                            <Accordion.Body>
+                                <Container>
+                                    <Row >
+                                        <Col >
+                                            <p>Start: {specificEvent.startWorkOut}</p>
+                                        </Col>
+                                        <Col xs={6}>End Time:{specificEvent.endWorkOut}</Col>
+                                        <Col>Date :{specificEvent.date}</Col>
+                                    </Row>
+                                    <Row md={4}>
+                                        <Col>Min Age: {specificEvent.minAge}</Col>
+                                    </Row>
+                                    <Row md={4}  >
+                                        <Col style={{ textAlign: 'center', margin: 'auto' }} >Description: {specificEvent.description}</Col>
+                                    </Row>
+                                </Container>
+                                <div style={{ marginTop: '30px', marginLeft: '86%', width: "100%" }} class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <div>
+                                        <Link class="btn btn-success" to={{
+                                            pathname: '/editevent',
+                                            state: { detail: specificEvent }
+                                        }}>Edit</Link>
+                                        <button onClick={() => {
+                                            deleteEvent(specificEvent)
+                                        }} type="button" class="btn btn-danger ">Delete</button>
+                                    </div>
+                                </div>
+                            </Accordion.Body>
+                        </Accordion.Item>
+                    </Accordion>
                 </div>
-            ))}
-
-        </div>
+            ))
+            }
+        </div >
     )
 }
 
-
 const mapStateToProps = (state) => {
-
-    const { events } = state.firestore.data
-
+    const { ordered } = state.firestore
     let tempEvents = [];
-    if (events) {
-        for (let key in events) {
-            events[key].numberOfParticipants.map(moreEventsIJoined=>{
-                if(state.firebase.auth.uid==moreEventsIJoined){
-                    tempEvents.push(
-                        {
-                            authorName:events[key].authorName,
-                            eventName: events[key].eventName,
-                            description: events[key].description,
-                            authorId: events[key].authorId,
-                            startWorkOut: events[key].startWorkOut,
-                            numberOfParticipants: events[key].numberOfParticipants,
-                            minAge: events[key].minAge
-                        }
-                    )
-
-                }
-            })
-            if ( events[key].authorId == state.firebase.auth.uid ){
+    for (let key in ordered) {
+        for (let prop in ordered[key]) {
+            if (ordered[key][prop].authorId == state.firebase.auth.uid) {
                 tempEvents.push(
                     {
-                        authorName:events[key].authorName,
-                        eventName: events[key].eventName,
-                        description: events[key].description,
-                        authorId: events[key].authorId,
-                        startWorkOut: events[key].startWorkOut,
-                        numberOfParticipants: events[key].numberOfParticipants,
-                        minAge: events[key].minAge
+                        authorName: ordered[key][prop].authorName,
+                        eventName: ordered[key][prop].eventName,
+                        description: ordered[key][prop].description,
+                        authorId: ordered[key][prop].authorId,
+                        startWorkOut: ordered[key][prop].startWorkOut,
+                        endWorkOut: ordered[key][prop].endWorkOut,
+                        date: ordered[key][prop].startDate,
+                        minAge: ordered[key][prop].minAge,
+                        eventId: ordered[key][prop].id,
+                        locationName: ordered[key][prop].locationName,
+                        numberOfParticipants: ordered[key][prop].numberOfParticipants,
+                        phone: ordered[key][prop].phone,
+                        freeTraining: ordered[key][prop].freeTraining
                     }
                 )
+                console.log(ordered[key][prop]);
             }
 
         }
     }
     return {
         auth: state.firebase.auth,
-        events: tempEvents || []
+        events: tempEvents || [],
+        firestore: state.firestore
     }
+
 }
 export default compose(
     connect(mapStateToProps),

@@ -10,7 +10,7 @@ import {reactReduxFirebase,getFirebase} from 'react-redux-firebase'
 import fbConfig from './config/fbConfig'
 import rootReducer from './account/reducers/rootReducer'
 import { Provider } from 'react-redux';
-
+import "react-phone-number-input/style.css"
 
 const store=createStore(rootReducer,
   compose (
@@ -20,7 +20,6 @@ const store=createStore(rootReducer,
   )    
     );
     store.firebaseAuthIsReady.then(()=>{
-
       ReactDOM.render(
         <Provider store={store}>
           <App />
@@ -29,7 +28,4 @@ const store=createStore(rootReducer,
       );
     })
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
