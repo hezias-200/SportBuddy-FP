@@ -17,12 +17,9 @@ export const createEvent=(event)=>{
         })
     }
 };
-
-
 export const chat=(messages)=>{
     return(dispatch,getState,{getFirebase,getFirestore})=>{
         const firestore=getFirestore();
-        const profile=getState().firebase.profile;
         const autorId=getState().firebase.auth.uid;
         firestore.collection('messages').add({
             ...messages,

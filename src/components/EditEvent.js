@@ -9,6 +9,8 @@ import { Form, FormControl, FormGroup, Button } from 'react-bootstrap';
 import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
 import PhoneInput from "react-phone-number-input";
+import swal from 'sweetalert';
+import { format } from 'date-fns';
 
 import usePlacesAutocomplete, {
     getGeocode,
@@ -38,10 +40,13 @@ function EditEvent(props) {
         phone:props.location.state.detail.phone ,
         eventId:props.location.state.detail.eventId,
         freeTraining:props.location.state.detail.freeTraining,
+        price:props.location.state.detail.price,
+
     });
+    console.log(props.location.state.detail);
     const [countryPhone, setCountryPhone] = React.useState()
-    const [clickedFreeTraining, setClickedFreeTraining] = React.useState(state.freeTraining)
-    console.log(clickedFreeTraining);
+    const [clickedFreeTraining, setClickedFreeTraining] = React.useState(!state.freeTraining)
+    const [validError, setValidError] = React.useState("");
 
     const locationSelected = React.useCallback(({ lat, lng }, { address }) => {
         setState({
@@ -55,26 +60,53 @@ function EditEvent(props) {
         })
     });
     const handleCheckbox = () => {
-        if (!clickedFreeTraining) {
-            console.log("sssssss");
-            setClickedFreeTraining(true)
+        if (clickedFreeTraining) {
             setState({
-                ...state, [`freeTraining`]: true
+                ...state, freeTraining: clickedFreeTraining
             })
-        }
-        else  {
             setClickedFreeTraining(false)
-            setState({
-                ...state,['freeTraining'] : false
-            })
-            
         }
-        console.log(state.freeTraining);
+        else {
+            setState({
+                ...state, freeTraining: clickedFreeTraining
+            })
+            setClickedFreeTraining(true)
+        }
+    }
+    const validationEvent = (e) => {
+        let timeError = ""
+        let passwordError = ""
+        let dateError = ""
+        let flag = true;
+
+        if (format(new Date(), 'yyyy-MM-dd') > state.startDate) {
+            dateError = "The Date is not valid"
+            setValidError(dateError)
+            flag = false
+        }
+        else if (state.startWorkOut >= state.endWorkOut) {
+            timeError = "The start time must be less than end time "
+            setValidError(timeError)
+            flag = false
+        }
+        return flag;
     }
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
-        props.editEvent(state)
+        const valid = validationEvent()
+        if (valid) {
+            props.editEvent(state)
+            swal({
+                title: "Done",
+                text: "Your Event Created Enjoy!",
+                icon: "success",
+                button: "OK",
+            })
+                .then(() => props.history.push('/homepage'))
+
+        }
+
         alert("Your Event Edited Enjoy")
         props.history.push('/homepage')
     }
@@ -151,8 +183,7 @@ function EditEvent(props) {
                         onChange={(e) => handlePhone(setCountryPhone, e)}
                         placeholder={`${state.phone}`} ></PhoneInput>
                 </FormGroup>
-                <FormGroup class="input-group form-group" >
-
+                <FormGroup class="input-group form-group">
                     <Form.Check onChange={() => handleCheckbox()} style={{ marginLeft: 'auto', background: 'white' }}
                         type={'checkbox'}
                         id={`checkbox`}
@@ -160,8 +191,24 @@ function EditEvent(props) {
                         defaultChecked={state.freeTraining}
                     />
                 </FormGroup>
+                {!state.freeTraining ? <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>10</i></span>
+                    </div>
+                    <FormControl value={state.price} onChange={(e) => {
+                        let val = parseInt(e.target.value, 10);
+                        if (isNaN(val)) {
+                            setState({ ...state, price: "" });
+                        } else {
+                            val = val >= 0 ? val : "";
+                            setState({ ...state, price: val });
+                        }
+                    }} min="1" required id="price" type="number" onChange={handleChange} placeholder="Enter Price" /></FormGroup> : null}
                 <div class="form-group" style={{ textAlign: 'center' }}>
-                    <input type="submit" value="Create Event" class=" btn  btn-warning  " />
+                    <div style={{ color: 'red' }} className="center">
+                        {validError ? <p>{validError}</p> : null}
+                    </div>
+                    <input type="submit" value="Edit Event" class=" btn  btn-warning  " />
                 </div>
             </Form>
         </div>
@@ -169,6 +216,7 @@ function EditEvent(props) {
 }
 
 function Search({ props,panTo }) {
+    console.log(props);
     
     const {
         ready,
@@ -214,7 +262,7 @@ function Search({ props,panTo }) {
                         value={value}
                         onChange={handleInput}
                         disabled={!ready}
-                        placeholder={`${props.locationName}`}
+                        placeholder={props.locationName}
                     />
                 </FormGroup>
                 <ComboboxPopover>
@@ -231,11 +279,9 @@ function Search({ props,panTo }) {
 
 const mapStateToProps = (state) => {
     const { events } = state.firestore.data
-    // console.log(state);
     return {
         auth: state.firebase.auth,
         data: events
-
     }
 }
 const mapDispatchToProps = (dispatch) => {

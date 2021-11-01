@@ -7,6 +7,8 @@ import { compose } from 'redux';
 import { GoogleMap, useLoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import usePlacesAutocomplete, { getGeocode, getLatLng, } from "use-places-autocomplete";
 import { Combobox, ComboboxInput, ComboboxPopover, ComboboxOption } from "@reach/combobox";
+
+
 import "@reach/combobox/styles.css";
 import { format } from 'date-fns';
 const libraries = ["places"];
@@ -26,7 +28,6 @@ const HomePage = ({ event, auth, events, ...props }) => {
     googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
     libraries,
   });
-  const [mapRef, setMapRef] = useState(null);
   const [center, setCenter] = useState({
     lat: 32.085300,
     lng: 34.781769,
@@ -36,6 +37,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
   const [zoom, setZoom] = useState(5);
   const [infoOpen, setInfoOpen] = useState(false);
 
+  
   const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds();
     events.map(place => {
@@ -60,12 +62,18 @@ const HomePage = ({ event, auth, events, ...props }) => {
       setZoom(13);
     }
   };
+  
   const handleOnLoad = (map) => {
-
-
-    // fitBounds(map);
-    setMapRef(map);
-  };
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        panTo({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => null
+    );
+    }
 
   const markerLoadHandler = (marker, place) => {
     return setMarkerMap(prevState => {
@@ -86,6 +94,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
         center={center}
         options={options}
         onLoad={handleOnLoad}
+
       >
         <Search panTo={panTo} />
         <Locate panTo={panTo} />
@@ -104,11 +113,10 @@ const HomePage = ({ event, auth, events, ...props }) => {
                 // https://images.vexels.com/media/users/3/141359/isolated/lists/4aff80f43aa783ac5071aace4a4e0c3a-triathlon-square-icon.png
                 icon={{
                   url: 'https://www.shareicon.net/data/512x512/2015/09/21/644104_sport_512x512.png',
-                  scaledSize: new window.google.maps.Size(35, 35), // scaled size
+                  scaledSize: new window.google.maps.Size(80, 80), // scaled size
                 }}
               /> :
               <div>
-                {console.log(format(new Date(), 'yyyy-MM-dd') + "/" + place.startDate)}
                 <Marker
                   key={place.id}
                   position={place.pos}
@@ -117,10 +125,9 @@ const HomePage = ({ event, auth, events, ...props }) => {
                   //https://www.shareicon.net/data/512x512/2016/01/26/709382_bank_512x512.png
                   icon={{
                     url: 'https://static.thenounproject.com/png/1380878-200.png',
-                    scaledSize: new window.google.maps.Size(40,40), // scaled size
+                    scaledSize: new window.google.maps.Size(40, 40), // scaled size
                   }}
                 />
-
               </div>
         ))}
         {infoOpen && selectedPlace && (
@@ -146,18 +153,25 @@ const HomePage = ({ event, auth, events, ...props }) => {
               <p>Number Of Participants: {selectedPlace.numberOfParticipants}</p>
               <p>Min Age: {selectedPlace.minAge}</p>
               {(selectedPlace.authorId != auth.uid) ?
-                <a
-                  href={`https://wa.me/${selectedPlace.phone}`}
-                  class="whatsapp_float"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <i class="fab fa-whatsapp"></i>
-                </a>
+                <div style={{display:"flex",width:'100px'}}>
+                  <a
+                    href={`https://wa.me/${selectedPlace.phone}`}
+                    class="whatsapp_float"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i class="fab fa-whatsapp"></i>
+                  </a>
+                  <div class="callus">
+                    <a style={{marginLeft:"8px"}} href={`tel:${selectedPlace.phone}`}>
+                      <i class="fa fa-phone fab" ></i>
+                    </a>
+                  </div>
+                </div>
                 : null}
             </div>
           </InfoWindow>
-        )}
+          )}
       </GoogleMap>
     </>
   );
@@ -215,9 +229,9 @@ function Search({ panTo }) {
   };
 
   return (
-    <div class="search">
+    <div  class="search">
       <Combobox onSelect={handleSelect}>
-        <ComboboxInput
+        <ComboboxInput 
           value={value}
           onChange={handleInput}
           disabled={!ready}
@@ -253,7 +267,7 @@ const mapStateToProps = (state) => {
             phone: events[key].phone,
             freeTraining: events[key].freeTraining,
             startDate: events[key].startDate,
-            endWorkOut:events[key].endWorkOut
+            endWorkOut: events[key].endWorkOut
           }
         )
     }

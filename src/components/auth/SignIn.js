@@ -1,16 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { signIn } from '../../database/actions/authActions'
 import { Redirect } from 'react-router'
-import { Form, FormControl, FormGroup, InputGroup } from 'react-bootstrap';
+import { Form, FormControl, FormGroup } from 'react-bootstrap';
 import firebase from '../../config/fbConfig'
 import socialMediaAuth from '../../components/auth/SignInSocialMedia'
 import title from '../../../src/title.png'
-import { Link } from 'react-router-dom';
 
 const SignIn = (props) => {
-  console.log(props);
-  const { auth, authError } = props;
+  const { auth} = props;
   const facebookProvider = new firebase.auth.FacebookAuthProvider();
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   const twiterProvider = new firebase.auth.TwitterAuthProvider();
@@ -18,6 +16,7 @@ const SignIn = (props) => {
     email: "",
     password: ""
   });
+  const [authError, setAuthError] = React.useState();
 
   const handleChange = (e) => {
     setState({
@@ -31,7 +30,11 @@ const SignIn = (props) => {
     firebase.auth().signInWithEmailAndPassword(state.email, state.password)
     .then(() => {
         props.history.push('/homepage')
-    })
+    }).catch((error) => {
+      var errorMessage = error.message;
+      setAuthError(errorMessage)
+      console.log(errorMessage);
+    });
   }
 
   const handleOnClick = async (provider) => {
@@ -42,7 +45,7 @@ const SignIn = (props) => {
   return (
     <div class="container">
       <div style={{ marginTop: '10%' }} class="d-flex justify-content-center h-100">
-        <div class="card">
+        <div class="card" style={{height:"auto"}}>
           <img src={title} alt="" srcset="" />
           <div class="card-header">
             <h3>Sign In</h3>
@@ -68,11 +71,10 @@ const SignIn = (props) => {
               </FormGroup>
               <div class="form-group">
                 <input type="submit" value="Login" class="btn float-right login_btn" />
-                <div className="red-text center">
-                  {authError ? <p>{authError}</p> :null }
+                <div style={{ color: 'red' }} className="center">
+                  {authError ? <p>{authError}</p> : null}
                 </div>
-              </div>
-              
+              </div>   
             </Form>
           </div>
           <div className="card-footer">
@@ -80,7 +82,7 @@ const SignIn = (props) => {
               Don't have an account?<a href="signup">Sign Up</a>
             </div>
             <div className="d-flex justify-content-center">
-              <a href="#">Forgot your password?</a>
+              <a href="/forgotyourpassword">Forgot your password?</a>
             </div>
           </div>
         </div>

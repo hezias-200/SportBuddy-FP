@@ -1,24 +1,39 @@
 @import "bootstrap/dist/css/bootstrap.css";
 
 @import url('https://fonts.googleapis.com/css?family=Numans');
-
+.input-group-text{
+background-color: rgba(0,0,0,0.5);
+color: white;
+font-family: 'Russo One', sans-serif;
+}
+.callus {
+    margin-top: 2px;
+    position:absolute;
+    width:30px;
+    height:50px;
+    cursor:pointer;
+    }
+    .callus i {
+    color:rgb(44, 44, 218);
+    transition:all 1s ease-out
+    }
+    .callus:hover i {
+    transform:scale(1.3);
+    opacity:0.8;
+    transition:all 1s ease-out
+    }
 .whatsapp_float {
-    position: relative;
     background-color: #25d366;
     color: #FFF;
     border-radius:30px;
-    border-top-left-radius: 10px;
-    text-align: center;
+    border-bottom-left-radius: 1px;
     font-size: 20px;
-    width: 40px;
-    height:30px;
+    width: 22px;
+    height:22px;
     margin: auto;
-    margin-left: auto;
+    text-align: center;
 }
-
-
 .whatsapp-icon {
-
     margin: auto;
 }
 
@@ -47,20 +62,17 @@ background-position: center;
 height: 100%;
 font-family: 'Numans', sans-serif;
 }
-
 #div_top_hypers {
     display:inline;      
 }
 #ul_top_hypers li{
     display: inline;
 }
-
 .container{
 height: 100%;
 align-content: center;
 margin-top: 4%;
 }
- 
 .card{
 height: 500px;
 margin-top: auto;
@@ -68,8 +80,6 @@ margin-bottom: auto;
 width: 400px;
 background-color: rgba(0,0,0,0.5) !important;
 }
-
-
 .social_icon span{
 font-size: 60px;
 margin-left: 10px;
@@ -86,7 +96,7 @@ color: white;
 }
 
 #colorBlack{
-    color: black;
+    color: white;
 }
 .logo_image{
     height: auto;

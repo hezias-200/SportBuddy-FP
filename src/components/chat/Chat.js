@@ -11,7 +11,7 @@ function Chat({ auth }) {
     const scroll = useRef()
     const [messages, setMessages] = useState([])
     useEffect(() => {
-        db.collection('messages').orderBy('createdAt').limit(50).onSnapshot(snapshot => {
+        db.collection('messages').orderBy('createdAt').limit().onSnapshot(snapshot => {
             setMessages(snapshot.docs.map(doc => doc.data()))
         })
     }, [])
@@ -19,17 +19,19 @@ function Chat({ auth }) {
     if (!auth.uid) return <Redirect to='/' />
 
     return (
-        <div style={{ marginTop: '5%'}} className="msgs">
-            {messages.map(({ id, text, photoURL, uid }) => (
-                <div>
-                    <div key={id} className={`msg ${uid === auth.uid ? 'sent' : 'received'}`}>
-                        <img className='imgChat' src={photoURL} alt="" />
-                        <p className='pChat'>{text}</p>
+        <div>
+            <div className="msgs">
+                {messages.map(({ id, text, photoURL,uid}) => (
+                    <div>
+                        <div key={id} className={`msg ${uid === auth.uid ? 'sent' : 'received'}`}>
+                            <img className='imgChat' src={photoURL} alt="" />
+                            <p className='pChat'>{text}</p>
+                        </div>
                     </div>
-                </div>
-            ))}
-            <div ref={scroll}></div>
-            <SendMessage scroll={scroll} />
+                ))}
+                <div ref={scroll}></div>
+            </div>
+                <SendMessage scroll={scroll}/>
         </div>
     )
 }
@@ -52,7 +54,6 @@ const mapStateToProps = (state) => {
     }
     return {
         auth: state.firebase.auth,
-        profile: profileUser || ''
     }
 }
 

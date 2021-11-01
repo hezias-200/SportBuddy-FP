@@ -4,15 +4,11 @@ import { connect } from 'react-redux'
 import firebase from 'firebase'
 import { db, auth } from '../../config/fbConfig'
 
-
 function SendMessage({ scroll, profile }) {
-    
     const [msg, setMsg] = useState('')
-
     async function sendMessage(e) {
         e.preventDefault()
         const { uid, photoURL } = auth.currentUser
-
         await db.collection('messages').add({
             text: msg,
             photoURL: profile.imgUrl,
@@ -24,11 +20,11 @@ function SendMessage({ scroll, profile }) {
     }
     <button class="msg_send_btn" type="button"></button>
     return (
-        <div>
-            <form onSubmit={sendMessage}>
+        <div >
+            <form  onSubmit={sendMessage}>
                 <div className="sendMsg">
-                    <Input style={{ width: '78%', fontSize: '15px', fontWeight: '550', marginLeft: '5px', marginBottom: '-3px' }} placeholder='Message...' type="text" value={msg} onChange={e => setMsg(e.target.value)} />
-                    <Button style={{ width: '18%', fontSize: '15px', fontWeight: '550', margin: '4px 5% -13px 5%', maxWidth: '200px' }} type="submit">Send</Button>
+                    <Input style={{borderRadius:"5px",backgroundColor:"#135e96", fontSize: '15px', fontWeight: '550',width:"89%",height:"60px"}} placeholder='Message...' type="text" value={msg} onChange={e => setMsg(e.target.value)} />
+                    <Button style={{width:"10%",height:"60px",backgroundColor:"#135e96" ,fontSize: '15px', fontWeight: '550',marginLeft:"10px" }} type="submit">Send</Button>
                 </div>
             </form>
         </div>

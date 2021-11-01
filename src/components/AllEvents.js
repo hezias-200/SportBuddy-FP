@@ -5,7 +5,6 @@ import { firestoreConnect } from 'react-redux-firebase';
 import { Redirect } from "react-router-dom";
 import React from 'react'
 import Table from 'react-bootstrap/Table';
-import { format } from 'date-fns';
 
 function AllEvents({ auth, events }) {
     const [eventFilter, setEventFilter] = React.useState('')
@@ -17,7 +16,7 @@ function AllEvents({ auth, events }) {
         <div className="container">
             <input style={{ marginTop: '30px' }} id="filterInput" onChange={handleOnChange} placeholder="Search Your Sport" type="text" />
             <Table responsive style={{ background: 'white' }} >
-                <thead>
+                <thead >
                     <tr>
                         <th>Full Name</th>
                         <th>Event Name</th>
@@ -32,7 +31,6 @@ function AllEvents({ auth, events }) {
                 <tbody>
                     {
                         (!eventFilter) && events.map(event => (
-                            format(new Date(), 'yyyy-MM-dd') != event.startDate ? null :
                             <tr>
                                 <td>
                                     {event.authorName}
@@ -41,17 +39,25 @@ function AllEvents({ auth, events }) {
                                 <td>{event.locationName}</td>
                                 <td>{event.minAge}</td>
                                 <td>{event.startDate}</td>
-                                <td>{event.startWorkOut}-{event.endWorkout}</td>
+                                <td>{event.startWorkOut}-{event.endWorkOut}</td>
                                 <td>{event.description}</td>
                                 {(auth.uid != event.authorId) ?
                                     <td>
-                                        <a
-                                            href={`https://wa.me/${event.phone}`}
-                                            class="whatsapp_float"
-                                            target="_blank"
-                                            rel="noopener noreferrer">
-                                            <i class="fab fa-whatsapp"></i>
-                                        </a>
+                                        <div style={{display:"flex",width:"70px"}}>
+                                            <a
+                                                href={`https://wa.me/${event.phone}`}
+                                                class="whatsapp_float"
+                                                target="_blank"
+                                                rel="noopener noreferrer">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </a>
+                                            <div class="callus">
+                                                <a href={`tel:${event.phone}`}>
+                                                    <i class="fa fa-phone fab" ></i>
+                                                </a>
+                                            </div>
+
+                                        </div>
                                     </td> : null}
 
                             </tr>
@@ -67,7 +73,7 @@ function AllEvents({ auth, events }) {
                                     <td>{event.locationName}</td>
                                     <td>{event.minAge}</td>
                                     <td>{event.startDate}</td>
-                                    <td>{event.startWorkOut}-{event.endWorkout}</td>
+                                    <td>{event.startWorkOut}-{event.endWorkOut}</td>
                                     <td>{event.description}</td>
                                 </tr> : null
 
@@ -84,8 +90,8 @@ const mapStateToProps = (state) => {
     let tempEvents = [];
     if (events) {
         for (let key in events) {
-            tempEvents.push(events[key]
-            )
+            console.log(events[key]);
+            tempEvents.push(events[key])
         }
     }
     return {
@@ -93,7 +99,6 @@ const mapStateToProps = (state) => {
         events: tempEvents || []
     }
 }
-
 export default compose(
     connect(mapStateToProps),
     firestoreConnect([

@@ -3,13 +3,15 @@ import React from "react";
 import 'react-dropdown-now/style.css';
 import { createEvent } from "../database/actions/projectActions";
 import { connect } from 'react-redux'
-import { Form, FormControl, FormGroup, Button } from 'react-bootstrap';
+import { Form, FormControl, FormGroup } from 'react-bootstrap';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from "use-places-autocomplete";
-import { Combobox, ComboboxInput, ComboboxPopover, ComboboxList, ComboboxOption } from "@reach/combobox";
+import { Combobox, ComboboxInput, ComboboxPopover, ComboboxOption } from "@reach/combobox";
 import PhoneInput from "react-phone-number-input";
 import { format } from 'date-fns';
+import swal from 'sweetalert';
+
 function CreateEvent(props) {
-    const [validError, setValidError] = React.useState();
+    const [validError, setValidError] = React.useState("");
     const [countryPhone, setCountryPhone] = React.useState()
     const [clickedFreeTraining, setClickedFreeTraining] = React.useState(false)
     const [state, setState] = React.useState({
@@ -18,11 +20,11 @@ function CreateEvent(props) {
         startWorkOut: '',
         endWorkOut: '',
         minAge: '',
-        numberOfParticipants: null,
+        numberOfParticipants: '',
         description: '',
         locationName: '',
-        freeTraining: true
-
+        freeTraining: true,
+        price: ''
     });
     const locationSelected = React.useCallback(({ lat, lng }, { address }) => {
         setState({
@@ -35,73 +37,54 @@ function CreateEvent(props) {
             locationName: address
         })
     });
-    const validationEvent =  (e) => {
+    const validationEvent = (e) => {
+        let timeError = ""
+        let passwordError = ""
+        let dateError = ""
+        let flag = true;
+
         if (format(new Date(), 'yyyy-MM-dd') > state.startDate) {
-            console.log("s");
-            return false
+            dateError = "The Date is not valid"
+            setValidError(dateError)
+            flag = false
         }
-        return true;
+        else if (state.startWorkOut >= state.endWorkOut) {
+            timeError = "The start time must be less than end time "
+            setValidError(timeError)
+            flag = false
+        }
+        return flag;
     }
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const valid=validationEvent()
-        if(valid){
+        const valid = validationEvent()
+        if (valid) {
             props.createEvent(state)
-            alert("Your Event Created Enjoy")
-            props.history.push('/homepage')
+            swal({
+                title: "Done",
+                text: "Your Event Created Enjoy!",
+                icon: "success",
+                button: "OK",
+            })
+                .then(() => props.history.push('/homepage'))
         }
-        else{
-            
-        }
-  
+
     }
     const handleChange = (e) => {
-        setState({
-            ...state, [e.target.id]: e.target.value
-        })
+        console.log(e.target.value);
+        if (e.target.id != 'numberOfParticipants' || e.target.id != 'minAge' || e.target.id != 'price')
+            setState({
+                ...state, [e.target.id]: e.target.value
+            })
+        if (e.target.id == 'numberOfParticipants' || e.target.id == 'minAge' || e.target.id == 'price') {
+            if (e.target.value > 0) {
+                setState({
+                    ...state, [e.target.id]: e.target.value
+                })
+            }
+        }
     }
-    // const validate = () => {
-    //     let dateError = "The Date Is Invalid";
-    //     let timeError = "The Time Is Invalid";
-    //     if (state.startDate < Date()) {
-    //         setValidError(
-    //             dateError
-    //         )
-    //     }
-    //     else
-    //         setValidError("")
-    //     if (state.endWorkOut < state.startWorkOut) {
-    //         setValidError(
-    //             dateError + "," + timeError
-    //         )
-    //         return false
-    //     }
-    //     else
-    //         setValidError("")
-    //     if (dateError ) {
-    //         return false;
-    //     }
-    //     return true;
-    // };
-    // const ErrorOutput = () => {
-        
-    //          if (state.startDate < Date()) {
-    //             return <span>Letters only</span>
-    //          }
-    //          return <span></span>
-        // if (name === 'firstName') {
-        //     if (!inputValue.match(/^[a-zA-Z]+$/) && inputValue.length > 0) {
-        //         return <span>Letters only</span>
-        //     }
-        //     return <span></span>
-        // }
-        // if (name === 'telNo') {
-        //     if (!inputValue.match(/^[0-9]+$/) && inputValue.length > 0) {
-        //         return <span>Numbers only</span>
-        //     }
-        //     return <span></span>
-        // }
-    // }
     const handlePhone = (e, t) => {
         setState({
             ...state, phone: t
@@ -157,13 +140,32 @@ function CreateEvent(props) {
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>5</i></span>
                     </div>
-                    <FormControl required id="numberOfParticipants" type="number" onChange={handleChange} placeholder="Max Participants" />
+                    <FormControl
+
+                         required id="numberOfParticipants" type="number" value={state.numberOfParticipants} onChange={(e) => {
+                            let val = parseInt(e.target.value, 10);
+                            if (isNaN(val)) {
+                                setState({ ...state, numberOfParticipants: "" });
+                            } else {
+                                val = val >= 0 ? val : "";
+                                setState({ ...state, numberOfParticipants: val });
+                            }
+                        }}
+                        placeholder="Max Participants" />
                 </FormGroup>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>6</i></span>
                     </div>
-                    <FormControl required id="minAge" type="number" onChange={handleChange} placeholder="Min Age" />
+                    <FormControl value={state.minAge} onChange={(e) => {
+                        let val = parseInt(e.target.value, 10);
+                        if (isNaN(val)) {
+                            setState({ minAge: "" });
+                        } else {
+                            val = val >= 0 ? val : "";
+                            setState({ ...state, minAge: val });
+                        }
+                    }} min="3" max="120" required id="minAge" type="number" onChange={handleChange} placeholder="Min Age" />
                 </FormGroup>
 
                 <Search panTo={locationSelected} />
@@ -172,7 +174,7 @@ function CreateEvent(props) {
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>8</i></span>
                     </div>
-                    <FormControl required id="description" type="text" onChange={handleChange} placeholder="Description" />
+                    <textarea className="form-control" id="description" cols="40" rows="3" onChange={handleChange} placeholder="Description"></textarea>
                 </FormGroup>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">
@@ -190,10 +192,24 @@ function CreateEvent(props) {
                         defaultChecked={state.freeTraining}
                     />
                 </FormGroup>
-                <div class="form-group" style={{ textAlign: 'center' }}>
-                    <input type="submit" value="Create Event" class=" btn  btn-warning  " />
-                    <div className="red-text center">
+                {clickedFreeTraining ? <FormGroup class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i>10</i></span>
                     </div>
+                    <FormControl value={state.price} onChange={(e) => {
+                        let val = parseInt(e.target.value, 10);
+                        if (isNaN(val)) {
+                            setState({ ...state, price: "" });
+                        } else {
+                            val = val >= 0 ? val : "";
+                            setState({ ...state, price: val });
+                        }
+                    }} min="1" required id="price" type="number" onChange={handleChange} placeholder="Enter Price" /></FormGroup> : null}
+                <div class="form-group" style={{ textAlign: 'center' }}>
+                    <div style={{ color: 'red' }} className="center">
+                        {validError ? <p>{validError}</p> : null}
+                    </div>
+                    <input type="submit" value="Create Event" class=" btn  btn-warning  " />
                 </div>
             </Form>
         </div>
@@ -254,7 +270,6 @@ function Search({ panTo }) {
     );
 }
 const mapStateToProps = (state) => {
-    console.log(state);
     return {
         auth: state.firebase.auth,
     }

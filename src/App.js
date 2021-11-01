@@ -14,30 +14,31 @@ import AboutUs from './components/AboutUs';
 import ContactUs from './components/ContactUs';
 import AllEvents from './components/AllEvents';
 import EditEvent from './components/EditEvent';
-import EditProfile from './components/EditProfile';
+import ForgotYourPassword from './components/auth/ForgotYourPassword';
+import Tips from './components/Tips';
+
 
 function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Navbar />
-         <div style={{ marginTop: '3.5%' }}>
-          <Switch >
-            <Route exact path='/' component={SignIn} />
-            <Route path='/signup' component={SignUp} />
-            <Route path='/createvent' component={CreateEvent} />
-            <Route path='/chat' component={Chat} />
-            <Route path='/editprofile' component={EditProfile} />
-            <Route path='/myprofile' component={MyProfile} />
-            <Route path='/homepage' component={HomePage} />
-            <Route path='/createprofile' component={CreateProfile} />
-            <Route path='/myevents' component={MyEvents} />
-            <Route path='/aboutus' component={AboutUs} />
-            <Route path='/contactus' component={ContactUs} />
-            <Route path='/allevents' component={AllEvents} />
-            <Route path='/editevent' component={EditEvent} />
-          </Switch>
-        </div>
+      <Navbar />
+        <Switch>
+          <Route exact path='/' component={SignIn} />
+          <Route path='/signup' component={SignUp} />
+          <Route path='/tips' component={Tips} />
+          <Route path='/forgotyourpassword' component={ForgotYourPassword} />
+          <Route path='/createvent' component={CreateEvent} />
+          <Route path='/chat' component={Chat} />
+          <Route path='/myprofile' component={MyProfile} />
+          <Route path='/homepage' component={HomePage} />
+          <Route path='/createprofile' component={CreateProfile} />
+          <Route path='/myevents' component={MyEvents} />
+          <Route path='/aboutus' component={AboutUs} />
+          <Route path='/contactus' component={ContactUs} />
+          <Route path='/allevents' component={AllEvents} />
+          <Route path='/editevent' component={EditEvent} />
+        </Switch>
       </div>
     </BrowserRouter >
   );

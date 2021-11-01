@@ -1,5 +1,4 @@
-.header{
-    
+.header{ 
     text-align: center;
     width: 100%;
     border: 3px solid green;
@@ -31,10 +30,7 @@
     background-size: auto auto;
     background-size: cover;
     width: 100%;
-    
-
 }
-
 /*Login Form CSS*/
 .login-form input{
 width: 100%;
