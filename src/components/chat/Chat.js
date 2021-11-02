@@ -11,7 +11,7 @@ function Chat({ auth }) {
     const scroll = useRef()
     const [messages, setMessages] = useState([])
     useEffect(() => {
-        db.collection('messages').orderBy('createdAt').limit().onSnapshot(snapshot => {
+        db.collection('messages').orderBy('createdAt').limit(1000).onSnapshot(snapshot => {
             setMessages(snapshot.docs.map(doc => doc.data()))
         })
     }, [])
@@ -24,7 +24,7 @@ function Chat({ auth }) {
                 {messages.map(({ id, text, photoURL,uid}) => (
                     <div>
                         <div key={id} className={`msg ${uid === auth.uid ? 'sent' : 'received'}`}>
-                            <img className='imgChat' src={photoURL} alt="" />
+                            {photoURL!=undefined?<img className='imgChat' src={photoURL} alt="" />:null}
                             <p className='pChat'>{text}</p>
                         </div>
                     </div>
@@ -38,20 +38,6 @@ function Chat({ auth }) {
 const mapStateToProps = (state) => {
     const userUid = state.firebase.auth.uid
     const { users } = state.firestore.data
-    let profileUser = null;
-    for (let user in users) {
-        if (user == userUid) {
-            profileUser = {
-                firstName: users[user].firstName,
-                imageName: users[user].imageName,
-                lastName: users[user].lastName,
-                age: users[user].age,
-                city: users[user].city,
-                description: users[user].description,
-                imgUrl: users[user].finallyImageUrl
-            }
-        }
-    }
     return {
         auth: state.firebase.auth,
     }

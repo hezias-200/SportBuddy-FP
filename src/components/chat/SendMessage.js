@@ -40,7 +40,7 @@ const mapStateToProps = (state) => {
         for (let prop in users[key]) {
             if (users[key][prop] == userUid) {
                 profileUser = {
-                    imgUrl: users[key].finallyImageUrl|| '',
+                    imgUrl: (users[key].finallyImageUrl!=undefined)?users[key].finallyImageUrl: "https://hook.finance/sites/default/files/user.png",
                 }
             }  
         }

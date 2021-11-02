@@ -89,7 +89,7 @@ const MyProfile = (props) => {
                     <button type="button" class="btn btn-primary " onClick={() => { saveClickHandler() }} >Save</button>
                 }
                 {(profile.imgUrl != undefined) ?
-                    <Card.Img class="profile_img" src={`${profile.imgUrl}`} /> : null}
+                    <Card.Img class="profile_img" src={`${profile.imgUrl}`} /> :null}
                 <Card.Body>
                     <Card.Title style={{ color: "white", textTransform: 'capitalize', textAlign: 'center' }}>{(!infoOpen) ?
                         `${profile.fullName}` :
@@ -129,7 +129,7 @@ const mapStateToProps = (state) => {
                 age: (users[user].age != undefined) ? users[user].age : '',
                 city: (users[user].city != undefined) ? users[user].city : '',
                 description: (users[user].description != undefined) ? users[user].description : '',
-                imgUrl: users[user].finallyImageUrl,
+                imgUrl: users[user].finallyImageUrl!=undefined?users[user].finallyImageUrl:'https://hook.finance/sites/default/files/user.png',
                 phone: (users[user].phone != undefined) ? users[user].phone : ''
             }
         }

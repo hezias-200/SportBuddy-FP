@@ -16,14 +16,14 @@ const mapContainerStyle = {
   height: "100vw",
   width: "100vw",
 };
+
 const options = {
   mapId: 'b154b0fd351ffa30',
   disableDefaultUI: true,
-  zoomControl: true,
+  zoomControl: true
 };
 export let clickedEvents = [];
-
-const HomePage = ({ event, auth, events, ...props }) => {
+const HomePage = ({ event, auth, events, ...props }) => {     
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyBUR6P5mafV5z890WK7o9RIJnOHKIsVIwE",
     libraries,
@@ -37,7 +37,6 @@ const HomePage = ({ event, auth, events, ...props }) => {
   const [zoom, setZoom] = useState(5);
   const [infoOpen, setInfoOpen] = useState(false);
 
-  
   const fitBounds = map => {
     const bounds = new window.google.maps.LatLngBounds();
     events.map(place => {
@@ -73,6 +72,8 @@ const HomePage = ({ event, auth, events, ...props }) => {
       },
       () => null
     );
+
+
     }
 
   const markerLoadHandler = (marker, place) => {
@@ -113,7 +114,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
                 // https://images.vexels.com/media/users/3/141359/isolated/lists/4aff80f43aa783ac5071aace4a4e0c3a-triathlon-square-icon.png
                 icon={{
                   url: 'https://www.shareicon.net/data/512x512/2015/09/21/644104_sport_512x512.png',
-                  scaledSize: new window.google.maps.Size(80, 80), // scaled size
+                  scaledSize: new window.google.maps.Size(40, 40), // scaled size
                 }}
               /> :
               <div>
@@ -123,9 +124,10 @@ const HomePage = ({ event, auth, events, ...props }) => {
                   onLoad={marker => markerLoadHandler(marker, place)}
                   onClick={(event) => markerClickHandler(event, place)}
                   //https://www.shareicon.net/data/512x512/2016/01/26/709382_bank_512x512.png
+                  //https://static.thenounproject.com/png/1380878-200.png
                   icon={{
-                    url: 'https://static.thenounproject.com/png/1380878-200.png',
-                    scaledSize: new window.google.maps.Size(40, 40), // scaled size
+                    url: 'https://www.shareicon.net/data/512x512/2016/01/26/709382_bank_512x512.png',
+                    scaledSize: new window.google.maps.Size(35, 40), // scaled size
                   }}
                 />
               </div>
