@@ -48,7 +48,7 @@ function CreateEvent(props) {
             setValidError(dateError)
             flag = false
         }
-        else if (state.startWorkOut >= state.endWorkOut) {
+         if (state.startWorkOut >= state.endWorkOut) {
             timeError = "The start time must be less than end time "
             setValidError(timeError)
             flag = false
@@ -128,7 +128,7 @@ function CreateEvent(props) {
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i>3</i></span>
                     </div>
-                    <FormControl required id="startWorkOut" type="time" onChange={handleChange} placeholder="Start Time" />
+                    <FormControl className="startWorkOut"  required id="startWorkOut"  type="time" onChange={handleChange} placeholder='12:00' />
                 </FormGroup>
                 <FormGroup class="input-group form-group">
                     <div class="input-group-prepend">

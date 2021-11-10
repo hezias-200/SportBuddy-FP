@@ -25,8 +25,6 @@ import {
     ComboboxOption,
 } from "@reach/combobox";
 
-
-
 function EditEvent(props) {
     const [state, setState] = React.useState({
         eventName:  props.location.state.detail.eventName ,
@@ -216,7 +214,6 @@ function EditEvent(props) {
 }
 
 function Search({ props,panTo }) {
-    console.log(props);
     
     const {
         ready,

@@ -13,7 +13,7 @@ import "@reach/combobox/styles.css";
 import { format } from 'date-fns';
 const libraries = ["places"];
 const mapContainerStyle = {
-  height: "100vw",
+  height: "45.9vw",
   width: "100vw",
 };
 
@@ -34,7 +34,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
   });
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [markerMap, setMarkerMap] = useState({});
-  const [zoom, setZoom] = useState(5);
+  const [zoom, setZoom] = useState(12);
   const [infoOpen, setInfoOpen] = useState(false);
 
   const fitBounds = map => {
@@ -72,8 +72,6 @@ const HomePage = ({ event, auth, events, ...props }) => {
       },
       () => null
     );
-
-
     }
 
   const markerLoadHandler = (marker, place) => {
@@ -107,11 +105,7 @@ const HomePage = ({ event, auth, events, ...props }) => {
                 key={place.id}
                 position={place.pos}
                 onLoad={marker => markerLoadHandler(marker, place)}
-                onClick={(event) => markerClickHandler(event, place)}
-                //https://www.shareicon.net/data/512x512/2015/09/21/644104_sport_512x512.png
-                // https://static.thenounproject.com/png/777035-200.png
-                //https://static.thenounproject.com/png/777025-200.png
-                // https://images.vexels.com/media/users/3/141359/isolated/lists/4aff80f43aa783ac5071aace4a4e0c3a-triathlon-square-icon.png
+                onClick={(event) => markerClickHandler(event, place)}    
                 icon={{
                   url: 'https://www.shareicon.net/data/512x512/2015/09/21/644104_sport_512x512.png',
                   scaledSize: new window.google.maps.Size(40, 40), // scaled size
@@ -123,11 +117,9 @@ const HomePage = ({ event, auth, events, ...props }) => {
                   position={place.pos}
                   onLoad={marker => markerLoadHandler(marker, place)}
                   onClick={(event) => markerClickHandler(event, place)}
-                  //https://www.shareicon.net/data/512x512/2016/01/26/709382_bank_512x512.png
-                  //https://static.thenounproject.com/png/1380878-200.png
                   icon={{
                     url: 'https://www.shareicon.net/data/512x512/2016/01/26/709382_bank_512x512.png',
-                    scaledSize: new window.google.maps.Size(35, 40), // scaled size
+                    scaledSize: new window.google.maps.Size(33, 37), // scaled size
                   }}
                 />
               </div>
@@ -145,15 +137,20 @@ const HomePage = ({ event, auth, events, ...props }) => {
                       <i className="fas fa-comment-dollar"></i>
                       <i style={{ marginLeft: '2%' }}>Costs Money</i>
                     </span>
+                    <p>Price: {selectedPlace.price} &#8362;</p>
+
                   </div> : null}
                 <h3>{selectedPlace.eventName}</h3>
               </div>
               <p>Autor Name: {selectedPlace.authorName} </p>
               <p>Time: {selectedPlace.startWorkOut}-{selectedPlace.endWorkOut} </p>
               <p>Date: {selectedPlace.startDate} </p>
-              <p>Descrption: {selectedPlace.description}</p>
               <p>Number Of Participants: {selectedPlace.numberOfParticipants}</p>
               <p>Min Age: {selectedPlace.minAge}</p>
+              <p>Location: {selectedPlace.locationName}</p>
+              
+              <p>Descrption: {selectedPlace.description}</p>
+
               {(selectedPlace.authorId != auth.uid) ?
                 <div style={{display:"flex",width:'100px'}}>
                   <a
@@ -209,7 +206,7 @@ function Search({ panTo }) {
   } = usePlacesAutocomplete({
     requestOptions: {
       location: { lat: () => 32.085300, lng: () => 34.781769 },
-      radius: 200 * 1000,
+      radius: 200 *1000,
     },
   });
 
@@ -257,7 +254,7 @@ const mapStateToProps = (state) => {
       if (events[key].location)
         tempEvents.push(
           {
-            id: key,
+            id: key==null?'':key,
             authorId: events[key].authorId,
             authorName: events[key].authorName,
             eventName: events[key].eventName,
@@ -269,7 +266,13 @@ const mapStateToProps = (state) => {
             phone: events[key].phone,
             freeTraining: events[key].freeTraining,
             startDate: events[key].startDate,
-            endWorkOut: events[key].endWorkOut
+            endWorkOut: events[key].endWorkOut,
+            price: events[key].price,
+            locationName: events[key].locationName,
+
+            
+
+            
           }
         )
     }

@@ -2,10 +2,10 @@
 import { connect } from 'react-redux'
 import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
+import swal from 'sweetalert';
 import { Redirect, Link } from "react-router-dom";
 import React from "react";
 import { Accordion, Container, Row, Col } from 'react-bootstrap';
-import swal from 'sweetalert';
 
 function MyEvents({ auth, events, firestore }) {
     const deleteEvent = (specificEvent) => {

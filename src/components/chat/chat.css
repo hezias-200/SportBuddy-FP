@@ -56,7 +56,8 @@ margin: auto;}
   margin-top: 10%;
   height: 400px;
   background:radial-gradient(circle, #72aee6, #9ec2e6, #c5d9ed);
-
+scroll-behavior: smooth;  
+  
 }
 
 
