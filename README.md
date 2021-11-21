@@ -7,6 +7,15 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 In the project directory, you can run:
 
 ### `yarn start`
+![signIn-Page1](https://user-images.githubusercontent.com/62279337/142772846-afc37496-33e5-4f85-b62d-942ed99fdcfd.JPG)
+![signUp-page2](https://user-images.githubusercontent.com/62279337/142772848-f49fae88-b906-4a9b-8f14-626f6e88bfd2.JPG)
+![homePage-page4](https://user-images.githubusercontent.com/62279337/142772842-e9ec08c6-feb3-46ab-8699-24d4a60c3161.JPG)
+![AllEvents-page9](https://user-images.githubusercontent.com/62279337/142772838-8915998c-98fc-43f3-ad5e-4c63dfb3a6e5.JPG)
+![Chat-page7](https://user-images.githubusercontent.com/62279337/142772840-1f785edd-c56c-4cfa-8c56-265c534a0f05.JPG)
+![createEvent-page5](https://user-images.githubusercontent.com/62279337/142772841-201ef36b-ec6a-478b-8206-72ada714b26f.JPG)
+![myEvents-page8](https://user-images.githubusercontent.com/62279337/142772844-dea9c8c4-34bc-4124-a95c-c5b537c97d1f.JPG)
+![myProfile-page6](https://user-images.githubusercontent.com/62279337/142772845-ddf01607-c615-436e-b236-0df913b00b6e.JPG)
+
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
