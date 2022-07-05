@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/SportBuddy-FP/static/css/main.a8a2ab70.chunk.css",
+    "main.js": "/SportBuddy-FP/static/js/main.88de1add.chunk.js",
+    "main.js.map": "/SportBuddy-FP/static/js/main.88de1add.chunk.js.map",
+    "runtime-main.js": "/SportBuddy-FP/static/js/runtime-main.e970874e.js",
+    "runtime-main.js.map": "/SportBuddy-FP/static/js/runtime-main.e970874e.js.map",
+    "static/css/2.bf8f3104.chunk.css": "/SportBuddy-FP/static/css/2.bf8f3104.chunk.css",
+    "static/js/2.50d5a1d3.chunk.js": "/SportBuddy-FP/static/js/2.50d5a1d3.chunk.js",
+    "static/js/2.50d5a1d3.chunk.js.map": "/SportBuddy-FP/static/js/2.50d5a1d3.chunk.js.map",
+    "static/js/3.30d1c0e3.chunk.js": "/SportBuddy-FP/static/js/3.30d1c0e3.chunk.js",
+    "static/js/3.30d1c0e3.chunk.js.map": "/SportBuddy-FP/static/js/3.30d1c0e3.chunk.js.map",
+    "index.html": "/SportBuddy-FP/index.html",
+    "static/css/2.bf8f3104.chunk.css.map": "/SportBuddy-FP/static/css/2.bf8f3104.chunk.css.map",
+    "static/css/main.a8a2ab70.chunk.css.map": "/SportBuddy-FP/static/css/main.a8a2ab70.chunk.css.map",
+    "static/js/2.50d5a1d3.chunk.js.LICENSE.txt": "/SportBuddy-FP/static/js/2.50d5a1d3.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/SportBuddy-FP/static/media/background.62de8b60.png",
+    "static/media/logo.4572062c.png": "/SportBuddy-FP/static/media/logo.4572062c.png",
+    "static/media/logolocation.cb4032a1.png": "/SportBuddy-FP/static/media/logolocation.cb4032a1.png",
+    "static/media/section1.1a360be8.png": "/SportBuddy-FP/static/media/section1.1a360be8.png",
+    "static/media/title.77b98dc2.png": "/SportBuddy-FP/static/media/title.77b98dc2.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e970874e.js",
+    "static/css/2.bf8f3104.chunk.css",
+    "static/js/2.50d5a1d3.chunk.js",
+    "static/css/main.a8a2ab70.chunk.css",
+    "static/js/main.88de1add.chunk.js"
+  ]
+}
